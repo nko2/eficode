@@ -97,7 +97,9 @@ function detectExplosions() {
     explosions.push({x: panda.x, y: panda.y, age: 0});
     panda.health -= params.projectileDamage;
     if (panda.health <= 0) {
-        shooter.score += params.projectileKillScore;
+        if (shooter) {
+            shooter.score += params.projectileKillScore;
+        }
         panda.x = 1;
         panda.y = 1;
         panda.moving = 0;
