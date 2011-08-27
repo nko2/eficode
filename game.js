@@ -8,7 +8,7 @@ var evt = require('events')
   , pandas = {}
   , newPandas = {}
   , removedPandas = []
-  , pandaMovements = []
+  , pandaMovementCommands = []
   , projectiles = {}
   , newProjectiles = {}
   , removedProjectiles = []
@@ -31,10 +31,10 @@ game.playerLeft = function(id) {
   removedPandas.push(id);
 };
 game.playerStartedMoving = function(id, dir) {
-  pandaMovements.push({id: id, moving: 1, dir: dir});
+  pandaMovementCommands.push({id: id, moving: 1, dir: dir});
 };
 game.playerStoppedMoving = function(id) {
-  pandaMovements.push({id: id, moving: 0});
+  pandaMovementCommands.push({id: id, moving: 0});
 };
 game.playerFired = function(id) {
   if (playerHasRecentlyFired(id)) {
@@ -45,15 +45,15 @@ game.playerFired = function(id) {
     , x = panda.x
     , y = panda.y;
   switch (panda.dir) {
-    case params.Direction.UP: y -= projectileDimensions[1]; break;
+    case params.Direction.UP: y -= projectileDimensions.height; break;
     case params.Direction.DOWN: y += params.pandaHeight; break;
-    case params.Direction.LEFT: x -= projectileDimensions[0]; break;
+    case params.Direction.LEFT: x -= projectileDimensions.width; break;
     case params.Direction.RIGHT: x += params.pandaWidth; break;
   }
   switch (panda.dir) {
       case params.Direction.UP: ;
-      case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions[0] / 2));  break;
-      default: y += ((params.pandaHeight / 2) - (projectileDimensions[1] / 2));break;
+      case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions.width / 2));  break;
+      default: y += ((params.pandaHeight / 2) - (projectileDimensions.height / 2));break;
   }
   newProjectiles[uid()] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir, owner: id, firedAt: new Date().getTime()};
 };
@@ -97,16 +97,17 @@ function removeProjectilesOutsideGameArea() {
 
 function getProjectileDimensions(dir) {
   var horizProj   = dir === params.Direction.LEFT || dir === params.Direction.RIGHT
-    , dimensions = [params.projectileWidth, params.projectileHeight];
-  return horizProj ? dimensions : dimensions.reverse();
+    , dimensions = {width: params.projectileWidth, height: params.projectileHeight};
+  return horizProj ? dimensions : {width: dimensions.height, height: dimensions.width};
 };
 
-function detectExplosions() {
+function applyProjectileCollisions() {
   var collisions = [];
   _(projectiles).each(function(proj, id) {
     var projDim = getProjectileDimensions(proj.dir);
     _(pandas).each(function (panda) {
-      if (geom.isRectangleIntersection(proj.x, proj.y, projDim[0], projDim[1], panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
+      if (geom.isRectangleIntersection(proj.x, proj.y, projDim.width, projDim.height,
+                                       panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
         collisions.push([panda, proj, id]);
       }
     });
@@ -146,16 +147,13 @@ function removeDistinguishedExplosions() {
   return removedIds;
 }
 
-(function gameLoop() {
-  detectExplosions();
+function applyRemovedElements() {
+  var removedElements = [];
   
-  var removedProjectileIds = removedProjectiles.concat(removeProjectilesOutsideGameArea());
-  var removedExplosionIds = removeDistinguishedExplosions();
-
-  stateDelta = {};
-  
-  var removedElements = removedPandas.concat(removedProjectileIds.concat(removedExplosionIds));
-  if (!_(removedElements).isEmpty()) stateDelta['removedElements'] = removedElements;
+  removedElements.concat(removedProjectiles);
+  removedElements.concat(removeProjectilesOutsideGameArea());
+  removedElements.concat(removeDistinguishedExplosions());
+  removedElements.concat(removedPandas);
   
   _(removedPandas).each(function(id) {
     delete pandas[id];
@@ -163,11 +161,15 @@ function removeDistinguishedExplosions() {
   removedPandas = [];
   removedProjectiles = [];
   
+  return removedElements;
+}
+
+function applyNewElements() {
   var newElements = {};
+  
   if (!_(newPandas).isEmpty())      newElements['PANDA'] = newPandas;
   if (!_(newProjectiles).isEmpty()) newElements['PROJECTILE'] = newProjectiles;
   if (!_(newExplosions).isEmpty())  newElements['EXPLOSION'] = newExplosions;
-  if (!_(newElements).isEmpty())    stateDelta['newElements'] = newElements;
   
   _(pandas).extend(newPandas);
   newPandas = {};
@@ -175,21 +177,23 @@ function removeDistinguishedExplosions() {
   newProjectiles = {};
   _(explosions).extend(newExplosions);
   newExplosions = {};
+
+  return newElements;
+}
+
+function applyMovements() {
+  var deltas = {};
   
-  var deltas = {}
-  
-  _(pandaMovements).each(function(movement) {
-    if (!deltas[movement.id]) {
-      deltas[movement.id] = {};
-    }
-    deltas[movement.id]['moving'] = movement.moving;
-    pandas[movement.id]['moving'] = movement.moving;
-    if (movement.dir) {
-      deltas[movement.id]['dir'] = movement.dir;
-      pandas[movement.id]['dir'] = movement.dir;
+  _(pandaMovementCommands).each(function(cmd) {
+    if (!deltas[cmd.id]) deltas[cmd.id] = {};
+    deltas[cmd.id]['moving'] = cmd.moving;
+    pandas[cmd.id]['moving'] = cmd.moving;
+    if (cmd.dir) {
+      deltas[cmd.id]['dir'] = cmd.dir;
+      pandas[cmd.id]['dir'] = cmd.dir;
     }
   });
-  pandaMovements = [];
+  pandaMovementCommands = [];
   
   var pandaPositionUpdates = movement.updatePandaPositions(pandas);
   _(pandaPositionUpdates).each(function(update, id) {
@@ -203,12 +207,26 @@ function removeDistinguishedExplosions() {
     _(deltas[id]).extend(update);
   });
   
+  return deltas;
+}
+
+(function gameLoop() {
+  applyProjectileCollisions();
+  
+  var stateDelta = {};
+  
+  var removedElements = applyRemovedElements();
+  if (!_(removedElements).isEmpty()) stateDelta['removedElements'] = removedElements;
+    
+  var newElements = applyNewElements();
+  if (!_(newElements).isEmpty()) stateDelta['newElements'] = newElements;
+
+  var deltas = applyMovements();
   if (!_(deltas).isEmpty()) stateDelta['deltas'] = deltas;
   
   if (!_(stateDelta).isEmpty()) {
     game.emit('stateDelta', stateDelta);
   }
-
 
   setTimeout(gameLoop, 1000 / params.frameRate);
 })();

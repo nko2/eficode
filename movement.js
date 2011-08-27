@@ -53,12 +53,8 @@ movement = {
         });
         break;
     }
-    if (panda.x !== prevX) {
-      delta.x = panda.x
-    }
-    if (panda.y !== prevY) {
-      delta.y = panda.y;
-    }
+    if (panda.x !== prevX) delta.x = panda.x
+    if (panda.y !== prevY) delta.y = panda.y;
     return delta;
   },
 
@@ -74,12 +70,8 @@ movement = {
       case params.Direction.LEFT:  p.x -= speed; break;
       case params.Direction.RIGHT: p.x += speed; break;
     }
-    if (prevX !== p.x) {
-      delta.x = p.x;
-    }
-    if (prevY !== p.y) {
-      delta.y = p.y;
-    }
+    if (prevX !== p.x) delta.x = p.x;
+    if (prevY !== p.y) delta.y = p.y;
     return delta;
   },
 
