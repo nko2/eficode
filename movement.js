@@ -1,5 +1,7 @@
-var params = require('./params')
-  , _ = require('underscore');
+if (typeof window === 'undefined') {
+  params = require('./params');
+  _ = require('underscore');
+}
 
 function updatePandaPosition(panda) {
   if (!panda.moving) return;
@@ -41,8 +43,10 @@ function updatePositions(state) {
   });
 };
 
-module.exports = {
-  updatePositions: updatePositions
-};
+if (typeof window === 'undefined') {
+  module.exports = {
+    updatePositions: updatePositions
+  };
+}
 
 
