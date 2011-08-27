@@ -5,6 +5,7 @@ var start = function(display, socket) {
 	var currentDirection = 0;
 	var allAnimals = {};
 	var projectiles = new gamejs.sprite.Group();
+	var explosions = new gamejs.sprite.Group();
 	
 	var getDirectionValue = function(key) {
 		switch (key) {
@@ -81,8 +82,13 @@ var start = function(display, socket) {
 		projectiles.add(proj);
 	};
 	
+	var handleExplosion = function(explosionState) {
+		explosions.add(new sprites.Bloodsplash([explosionState.x, explosionState.y]));
+	};
+	
 	socket.on('gameState', function(state) {
 		projectiles = new gamejs.sprite.Group();
+		explosions  = new gamejs.sprite.Group();
 		
     $('#player-list').empty();
 		var allPandasInState = {};
@@ -93,7 +99,10 @@ var start = function(display, socket) {
 		});
   	_(state.projs).each(function(proj) {
   		handleProjectile(proj);
-    });
+  	});
+    _(state.expl).each(function(expl) {
+      handleExplosion(expl);
+    });  
 
 		_(allAnimals).each(function(animals, nick) {
 			if (allPandasInState[nick] === undefined) {
@@ -130,6 +139,9 @@ var start = function(display, socket) {
 			allAnimals[animalId].update(msDuration);
 			allAnimals[animalId].draw(mainSurface);
 		});
+		
+		
+		explosions.draw(mainSurface);
 	};
 	
 	gamejs.time.fpsCallback(tick, this, 15);
