@@ -70,10 +70,20 @@ var start = function(display, socket) {
 			allAnimals[player.nick].move(player.x, player.y, player.dir);
     });
   });
+
+	var grass = new gamejs.sprite.Group();
+	var i, j;
+	for (i = 0; i < 600; i += 15) {
+		for (j = 0; j < 600; j += 15) {
+			grass.add(new sprites.Grass([i, j]));
+		}
+	}
 	
 	var tick = function(msDuration) {
 		var mainSurface = gamejs.display.getSurface();
 		mainSurface.fill("#FFFFFF");
+		
+		grass.draw(mainSurface);
 		
 		gamejs.event.get().forEach(function(e) {
 			if (e.type == gamejs.event.KEY_DOWN) {
