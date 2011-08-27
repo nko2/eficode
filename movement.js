@@ -1,8 +1,5 @@
-// Epic hack pt.1
-if (typeof window === 'undefined') {
-  params = require('./params');
-  _ = require('underscore');
-}
+var params = require('./params')
+  , _ = require('underscore');
 
 movement = {
   updatePandaPosition: function(panda) {
@@ -41,9 +38,6 @@ movement = {
   }
 }
 
-// Epic hack pt.2
-if (typeof window === 'undefined') {
-  module.exports = movement;
-}
+module.exports = movement;
 
 

@@ -26,10 +26,6 @@ app.configure('production', function(){
 app.get('/', function(req, res){
   res.render('index');
 });
-app.get('/movement.js', function(req, res) {
-  res.writeHead(200, {"Content-Type": "text/javascript"});
-  res.end(movementFile);
-})
 app.get('/params.js', function(req, res) {
   res.writeHead(200, {"Content-Type": "text/javascript"});
   res.end(paramsFile);
