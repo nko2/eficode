@@ -22,26 +22,26 @@ function updatePositions() {
   _(projectiles).each(updateElementPosition);
 };
 
-game.playerJoined = function(nick) {
-  pandas[nick] = {type: 'PANDA', nick: nick, x: 0, y: 0, dir: Direction.NONE};
+game.playerJoined = function(id, nick) {
+  pandas[id] = {type: 'PANDA', nick: nick, x: 0, y: 0, dir: Direction.NONE};
 };
-game.playerLeft = function(nick) {
-  delete pandas[nick];
+game.playerLeft = function(id) {
+  delete pandas[id];
 };
-game.playerStartedMoving = function(nick, dir) {
-  pandas[nick]['dir'] = dir;
+game.playerStartedMoving = function(id, dir) {
+  pandas[id]['dir'] = dir;
 };
-game.playerStoppedMoving = function(nick) {
-  pandas[nick]['dir'] = Direction.NONE;
+game.playerStoppedMoving = function(id) {
+  pandas[id]['dir'] = Direction.NONE;
 };
-game.playerFired = function(nick) {
-  var panda = pandas[nick];
+game.playerFired = function(id) {
+  var panda = pandas[id];
   projectiles.push({type: 'PROJECTILE', x: panda.x, y: panda.y, dir: panda.dir})
 };
 
 (function gameLoop() {
   updatePositions();
-  
+  console.log(pandas);
   var state = _(pandas).values().concat(projectiles);
   game.emit('state', state);
   
