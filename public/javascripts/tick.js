@@ -66,7 +66,7 @@ var start = function(display, socket, gameInit) {
 		return new sprites.Panda();
 	};
 	
-	var handlePanda = function(nick, x, y, dir, moving, health, score) {
+	var handlePanda = function(nick, x, y, dir, moving, health, score, alive) {
 		$('#player-list').append($('<li>').text(nick + ": " + health + " - " + score));
 		
 		var panda = allAnimals[nick];
@@ -74,7 +74,7 @@ var start = function(display, socket, gameInit) {
 			panda = allAnimals[nick] = createPanda();
 		}
 		
-		panda.updateState(x, y, dir, moving);
+		panda.updateState(x, y, dir, moving, alive);
 		panda.setHealth(health);
 	};
 	
@@ -92,7 +92,7 @@ var start = function(display, socket, gameInit) {
 		projectiles = new gamejs.sprite.Group();
 		explosions  = new gamejs.sprite.Group();
 		
-    $('#player-list').empty();
+        $('#player-list').empty();
 		var allPandasInState = {};
 		
 		_(state.pa).each(function(panda) {

@@ -100,13 +100,27 @@ function detectExplosions() {
     explosions.push({x: panda.x, y: panda.y, age: 0});
     panda.health -= params.projectileDamage;
     if (panda.health <= 0) {
-        panda.die()
+        killPanda(panda);
         if (shooter) {
             shooter.score += params.projectileKillScore;
         }
     }
   });
 };
+
+respawnPanda = function(panda) {
+    panda.alive = 1;
+    var newPos = movement.findNewPosForPanda(pandas);
+    panda.x = newPos.x;
+    panda.y = newPos.y;
+    panda.moving = 0;
+    panda.health = params.pandaStartHealth;
+}
+
+function killPanda(panda) {
+    panda.alive = 0;
+    panda.respawnTicks = params.respawnTicks;
+}
 
 function removeDistinguishedExplosions() {
   explosions = _(explosions).select(function(e) {

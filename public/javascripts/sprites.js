@@ -21,7 +21,7 @@ var Animated = function() {
 };
 gamejs.utils.objects.extend(Animated, gamejs.sprite.Sprite);
 
-Animated.prototype.updateState = function(x, y, dir, moving) {
+Animated.prototype.updateState = function(x, y, dir, moving, alive) {
 	if (dir !== this.dir) {
 		this.directionChanged = true;
 		this.currentImage = -1;
@@ -31,6 +31,7 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 	this.rect.top = y;
 	this.dir = dir;
 	this.moving = moving;
+	this.alive = alive;
 	this.statusUpdated = true;
 };
 
@@ -103,20 +104,6 @@ Panda.prototype.update = function(msDuration) {
 Panda.prototype.setHealth = function(health) {
   this.health = health;
 };
-
-Panda.prototype.respawn = function() {
-    this.alive = 1;
-    var newPos = movement.findNewPosForPanda(pandas);
-    panda.x = newPos.x;
-    panda.y = newPos.y;
-    panda.moving = 0;
-    panda.health = params.pandaStartHealth;
-}
-
-Panda.prototype.die = function() {
-    this.alive = 0;
-    this.respawnTicks = 30;
-}
 
 Panda.prototype.draw = function(mainSurface) {
   mainSurface.blit(this.image, this.rect);

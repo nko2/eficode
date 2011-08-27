@@ -24,7 +24,7 @@ movement = {
     if (panda.alive !== 1) {
         panda.respawnTicks -= 1;
         if (panda.respawnTicks === 0) {
-            panda.respawn();
+            respawnPanda(panda);
         }
         return;
     }
