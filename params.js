@@ -3,6 +3,7 @@ params = {
   gameHeight: 600,
   pandaWidth: 15,
   pandaHeight: 15,
+  pandaStartHealth: 100,
   projectileWidth: 15,
   projectileHeight: 5,
   explosionDuration: 2000,

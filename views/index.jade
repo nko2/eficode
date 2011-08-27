@@ -4,6 +4,7 @@
     label
       | Your name, plz:
       input#nick(type='text', name='user[name]', autofocus)
+    #login-fail(style='display: none;') Sorry, this nick has already been knicked.
     br
     label
       | If you feel lucky:
@@ -11,7 +12,11 @@
 
 #main(style='display: none;')
   #sidebar
-    h1 Tanks
+    h1 Sad Pandas
+    h2 Instructions
+    p Arrow keys move, space shoots
+    
     h2 Players
     ul#player-list
+    span#health
   canvas#gjs-canvas

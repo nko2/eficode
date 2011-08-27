@@ -4,16 +4,17 @@ var gamejs = require('gamejs'),
 $(document).ready(function() {
 	var socket = io.connect();
 
-	var main = function() {
-		$("#login").hide();
+	var main = function(gameInit) {
+		$("#login").remove();
 		$("#main").show();
 
 		display = gamejs.display.setMode([600, 600]);
-		tick.start(display, socket);
+		tick.start(display, socket, gameInit);
 	};
 
     function start() {
-        socket.emit('join', $('#nick').val(), function() {
+        socket.emit('join', $('#nick').val(), function(response) {
+          if (response.status) {
             gamejs.preload(
                 ["images/panda_side_1.png", "images/panda_side_2.png",
                     "images/panda_down_1.png", "images/panda_down_2.png",
@@ -26,7 +27,12 @@ $(document).ready(function() {
                     "images/flame_bolt_horizontal_1.png", "images/flame_bolt_horizontal_2.png",
                     "images/blood_splash.png"
             ]);
-            gamejs.ready(main);
+            gamejs.ready(function() {
+              main(response.gameState);
+            });
+          } else {
+            $("#login-fail").show();
+          }
         });
     };
 
