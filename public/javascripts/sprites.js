@@ -14,6 +14,7 @@ var Animated = function() {
 	this.moving = false;
 	this.directionChanged = false;
 	this.dir = -1;
+	this.stateUpdated = false;
 	
 	return this;
 };
@@ -29,6 +30,7 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 	this.rect.top = y;
 	this.dir = dir;
 	this.moving = moving;
+	this.statusUpdated = true;
 };
 
 Animated.prototype.update = function(msDuration) {
@@ -49,6 +51,18 @@ Animated.prototype.update = function(msDuration) {
 		this.ticksSinceLastImageChange = 0;
 		this.directionChanged = false;
 	}
+	
+	if (this.statusUpdated === false && this.moving === true) {
+		if (this.dir == 1 || this.dir == 2) {
+			var multiplier = (this.dir == 1) ? -1 : 1;
+			this.rect.top = this.rect.top + multiplier * msDuration/1000;
+		} else {
+			var multiplier = (this.dir == 3) ? -1 : 1;
+			this.rect.left = this.rect.left + multiplier * msDuration/1000;
+		}
+	}
+	
+	this.statusUpdated = false;
 };
 
 var Panda = function() {

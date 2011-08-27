@@ -132,7 +132,7 @@ var start = function(display, socket) {
 		});
 	};
 	
-	gamejs.time.fpsCallback(tick, this, 26);
+	gamejs.time.fpsCallback(tick, this, 15);
 };
 
 exports.start = start;
