@@ -1,16 +1,23 @@
 var evt = require('events')
   , _ = require('underscore')
+  , uid = require('./uid')
   , params = require('./params')
   , geom = require('./geometry')
   , movement = require('./movement')
   , game = new evt.EventEmitter()
   , pandas = {}
-  , projectiles = []
-  , explosions = [];
+  , newPandas = {}
+  , removedPandas = []
+  , pandaMovementCommands = []
+  , projectiles = {}
+  , newProjectiles = {}
+  , removedProjectiles = []
+  , explosions = {}
+  , newExplosions = {};
 
 game.playerJoined = function(id, nick) {
   var playerPos = movement.findNewPosForPanda(pandas);
-  pandas[id] = {
+  newPandas[id] = {
     nick: nick,
     x: playerPos.x,
     y: playerPos.y,
@@ -21,15 +28,13 @@ game.playerJoined = function(id, nick) {
   };
 };
 game.playerLeft = function(id) {
-  delete pandas[id];
+  removedPandas.push(id);
 };
 game.playerStartedMoving = function(id, dir) {
-  var panda = pandas[id];
-  panda.dir = dir;
-  panda.moving = 1;
+  pandaMovementCommands.push({id: id, moving: 1, dir: dir});
 };
 game.playerStoppedMoving = function(id) {
-  pandas[id]['moving'] = 0;
+  pandaMovementCommands.push({id: id, moving: 0});
 };
 game.playerFired = function(id) {
   if (playerHasRecentlyFired(id)) {
@@ -40,21 +45,27 @@ game.playerFired = function(id) {
     , x = panda.x
     , y = panda.y;
   switch (panda.dir) {
-    case params.Direction.UP: y -= projectileDimensions[1]; break;
+    case params.Direction.UP: y -= projectileDimensions.height; break;
     case params.Direction.DOWN: y += params.pandaHeight; break;
-    case params.Direction.LEFT: x -= projectileDimensions[0]; break;
+    case params.Direction.LEFT: x -= projectileDimensions.width; break;
     case params.Direction.RIGHT: x += params.pandaWidth; break;
   }
   switch (panda.dir) {
       case params.Direction.UP: ;
-      case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions[0] / 2));  break;
-      default: y += ((params.pandaHeight / 2) - (projectileDimensions[1] / 2));break;
+      case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions.width / 2));  break;
+      default: y += ((params.pandaHeight / 2) - (projectileDimensions.height / 2));break;
   }
-  projectiles.push({x: Math.floor(x), y: Math.floor(y), dir: panda.dir, owner: id, firedAt: new Date().getTime()});
+  newProjectiles[uid()] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir, owner: id, firedAt: new Date().getTime()};
 };
 
 game.getState = function() {
-  return {pandas: _(pandas).values(), projectiles: projectiles, explosions: explosions};
+  return {
+    newElements: {
+      PANDA: pandas,
+      PROJECTILE: projectiles,
+      EXPLOSION: explosions
+    }
+  };
 };
 game.getNicks = function() {
   return _(pandas).pluck('nick');
@@ -72,31 +83,42 @@ function isInsideGameArea(el) {
 }
 
 function removeProjectilesOutsideGameArea() {
-  projectiles = _(projectiles).select(isInsideGameArea);
+  var removedIds = [];
+  projectiles = _(projectiles).reduce(function(memo, proj, id) {
+    if (isInsideGameArea(proj)) {
+      memo[id] = proj;
+    } else {
+      removedIds.push(id);
+    }
+    return memo;
+  }, {});
+  return removedIds;
 };
 
 function getProjectileDimensions(dir) {
   var horizProj   = dir === params.Direction.LEFT || dir === params.Direction.RIGHT
-    , dimensions = [params.projectileWidth, params.projectileHeight];
-  return horizProj ? dimensions : dimensions.reverse();
+    , dimensions = {width: params.projectileWidth, height: params.projectileHeight};
+  return horizProj ? dimensions : {width: dimensions.height, height: dimensions.width};
 };
 
-function detectExplosions() {
+function applyProjectileCollisions() {
   var collisions = [];
-  _(projectiles).each(function(proj, userId) {
+  _(projectiles).each(function(proj, id) {
     var projDim = getProjectileDimensions(proj.dir);
     _(pandas).each(function (panda) {
-      if (geom.isRectangleIntersection(proj.x, proj.y, projDim[0], projDim[1], panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
-        collisions.push([panda, proj]);
+      if (geom.isRectangleIntersection(proj.x, proj.y, projDim.width, projDim.height,
+                                       panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
+        collisions.push([panda, proj, id]);
       }
     });
   });
   _(collisions).each(function(coll) {
     var panda = coll[0]
       , proj = coll[1]
+      , id = coll[2]
       , shooter = pandas[proj.owner];
-    projectiles = _(projectiles).without(proj);
-    explosions.push({x: panda.x, y: panda.y, age: 0});
+    removedProjectiles.push(id);
+    newExplosions[uid()] = {x: panda.x, y: panda.y, age: 0};
     panda.health -= params.projectileDamage;
     if (panda.health <= 0) {
         var newPos = movement.findNewPosForPanda(pandas);
@@ -112,23 +134,99 @@ function detectExplosions() {
 };
 
 function removeDistinguishedExplosions() {
-  explosions = _(explosions).select(function(e) {
-    if (e.age > params.explosionDuration) {
-      return false;
+  var removedIds = [];
+  explosions = _(explosions).reduce(function(memo, expl, id) {
+    if (expl.age <= params.explosionDuration) {
+      expl.age += 1000 / params.frameRate;
+      memo[id] = expl
     } else {
-      e.age += 1000 / params.frameRate;
-      return true;
+      removedIds.push(id);
+    }
+    return memo;
+  }, {});
+  return removedIds;
+}
+
+function applyRemovedElements() {
+  var removedElements = [];
+  
+  removedElements.concat(removedProjectiles);
+  removedElements.concat(removeProjectilesOutsideGameArea());
+  removedElements.concat(removeDistinguishedExplosions());
+  removedElements.concat(removedPandas);
+  
+  _(removedPandas).each(function(id) {
+    delete pandas[id];
+  });
+  removedPandas = [];
+  removedProjectiles = [];
+  
+  return removedElements;
+}
+
+function applyNewElements() {
+  var newElements = {};
+  
+  if (!_(newPandas).isEmpty())      newElements['PANDA'] = newPandas;
+  if (!_(newProjectiles).isEmpty()) newElements['PROJECTILE'] = newProjectiles;
+  if (!_(newExplosions).isEmpty())  newElements['EXPLOSION'] = newExplosions;
+  
+  _(pandas).extend(newPandas);
+  newPandas = {};
+  _(projectiles).extend(newProjectiles);
+  newProjectiles = {};
+  _(explosions).extend(newExplosions);
+  newExplosions = {};
+
+  return newElements;
+}
+
+function applyMovements() {
+  var deltas = {};
+  
+  _(pandaMovementCommands).each(function(cmd) {
+    if (!deltas[cmd.id]) deltas[cmd.id] = {};
+    deltas[cmd.id]['moving'] = cmd.moving;
+    pandas[cmd.id]['moving'] = cmd.moving;
+    if (cmd.dir) {
+      deltas[cmd.id]['dir'] = cmd.dir;
+      pandas[cmd.id]['dir'] = cmd.dir;
     }
   });
+  pandaMovementCommands = [];
+  
+  var pandaPositionUpdates = movement.updatePandaPositions(pandas);
+  _(pandaPositionUpdates).each(function(update, id) {
+    if (!deltas[id]) deltas[id] = {};
+    _(deltas[id]).extend(update);
+  });
+  
+  var projectilePositionUpdates = movement.updateProjectilePositions(projectiles);
+  _(projectilePositionUpdates).each(function(update, id) {
+    if (!deltas[id]) deltas[id] = {};
+    _(deltas[id]).extend(update);
+  });
+  
+  return deltas;
 }
 
 (function gameLoop() {
-  movement.updatePositions(pandas, projectiles);
-  detectExplosions();
-  removeProjectilesOutsideGameArea();
-  removeDistinguishedExplosions();
+  applyProjectileCollisions();
+  
+  var stateDelta = {};
+  
+  var removedElements = applyRemovedElements();
+  if (!_(removedElements).isEmpty()) stateDelta['removedElements'] = removedElements;
+    
+  var newElements = applyNewElements();
+  if (!_(newElements).isEmpty()) stateDelta['newElements'] = newElements;
 
-  game.emit('state', {pandas: _(pandas).values(), projectiles: projectiles, explosions: explosions})
+  var deltas = applyMovements();
+  if (!_(deltas).isEmpty()) stateDelta['deltas'] = deltas;
+  
+  if (!_(stateDelta).isEmpty()) {
+    game.emit('stateDelta', stateDelta);
+  }
 
   setTimeout(gameLoop, 1000 / params.frameRate);
 })();

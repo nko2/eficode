@@ -20,7 +20,10 @@ movement = {
   },
   
   updatePandaPosition: function(panda, allPandas) {
-    var speed = params.Speed.PANDA;
+    var speed = params.Speed.PANDA
+      , prevX = panda.x
+      , prevY = panda.y
+      , delta = {};
 
     if (!panda.moving) return;
 
@@ -50,24 +53,50 @@ movement = {
         });
         break;
     }
+    if (panda.x !== prevX) delta.x = panda.x
+    if (panda.y !== prevY) delta.y = panda.y;
+    return delta;
   },
 
   updateProjectilePosition: function(p) {
-    var speed = params.Speed.PROJECTILE;
+    var speed = params.Speed.PROJECTILE
+      , prevX = p.x
+      , prevY = p.y
+      , delta = {};
+      
     switch (p.dir) {
       case params.Direction.UP:    p.y -= speed; break;
       case params.Direction.DOWN:  p.y += speed; break;
       case params.Direction.LEFT:  p.x -= speed; break;
       case params.Direction.RIGHT: p.x += speed; break;
     }
+    if (prevX !== p.x) delta.x = p.x;
+    if (prevY !== p.y) delta.y = p.y;
+    return delta;
   },
 
-  updatePositions: function(pandas, projectiles) {
-    var self = this;
-    _(pandas).each(function(panda) {
-      self.updatePandaPosition(panda, pandas);
+  updatePandaPositions: function(pandas) {
+    var self = this
+      , deltas = {};
+    _(pandas).each(function(panda, id) {
+      var delta = self.updatePandaPosition(panda, pandas);
+      if (!_(delta).isEmpty()) {
+        deltas[id] = delta;
+      }
     });
-    _(projectiles).each(this.updateProjectilePosition);
+    return deltas;
+  },
+  
+  updateProjectilePositions: function(projectiles) {
+    var self = this
+      , deltas = {};
+    _(projectiles).each(function(projectile, id) {
+      var delta = self.updateProjectilePosition(projectile);
+      if (!_(delta).isEmpty()) {
+        deltas[id] = delta;
+      }
+    });
+    return deltas;
   },
   
   findNewPosForPanda: function(pandas) {
