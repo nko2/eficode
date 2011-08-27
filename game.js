@@ -2,6 +2,8 @@ var evt = require('events')
   , _ = require('underscore')
   , gameWidth = 600
   , gameHeight = 600
+  , pandaWidth = 15
+  , pandaHeight = 15
   , Direction = {NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4}
   , Speed = {PANDA: 10, PROJECTILE: 20}
   , frameRate = 2
@@ -26,19 +28,31 @@ game.playerFired = function(id) {
   projectiles.push({type: 'PROJECTILE', x: panda.x, y: panda.y, dir: panda.dir});
 };
 
-function updateElementPosition(el) {
-  var speed = Speed[el.type];
+function updatePandaPosition(el) {
+  var speed = Speed.PANDA;
   switch (el.dir) {
-    case Direction.UP:    el['y'] -= speed; break;
-    case Direction.DOWN:  el['y'] += speed; break;
-    case Direction.LEFT:  el['x'] -= speed; break;
-    case Direction.RIGHT: el['x'] += speed; break;
+    case Direction.UP:
+      el.y = Math.max(el.y - speed, 0);
+      break;
+    case Direction.DOWN:
+      el.y = Math.min(el.y + speed, gameHeight - pandaHeight);
+      break;
+    case Direction.LEFT:
+      el.x = Math.max(el.x - speed, 0);
+      break;
+    case Direction.RIGHT:
+      el.x = Math.min(el.x + speed, gameWidth - pandaWidth);
+      break;
   }
-}
+};
+
+function updateProjectilePosition(el) {
+  
+};
 
 function updatePositions() {
-  _(pandas).each(updateElementPosition);
-  _(projectiles).each(updateElementPosition);
+  _(pandas).each(updatePandaPosition);
+  _(projectiles).each(updateProjectilePosition);
 };
 
 

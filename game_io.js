@@ -7,14 +7,17 @@ module.exports = function(io) {
     socket.on('join', function(nick, callback) {
       var id = '' + new Date().getTime() + Math.random();
       game.playerJoined(id, nick);
-      socket.on('startMoving', function(direction) {
+      socket.on('startMoving', function(direction, callback) {
         game.playerStartedMoving(id, direction);
+        callback();
       });
-      socket.on('stopMoving', function() {
+      socket.on('stopMoving', function(callback) {
         game.playerStoppedMoving(id);
+        callback();
       });
-      socket.on('fire', function() {
+      socket.on('fire', function(callback) {
         game.playerFired(id);
+        callback();
       });
       socket.on('disconnect', function() {
         game.playerLeft(id);
