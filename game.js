@@ -54,7 +54,13 @@ game.playerFired = function(id) {
 };
 
 game.getState = function() {
-  return {pandas: _(pandas).values(), projectiles: projectiles, explosions: explosions};
+  return {
+    newElements: {
+      PANDA: pandas,
+      PROJECTILE: projectiles,
+      EXPLOSION: explosions
+    }
+  };
 };
 game.getNicks = function() {
   return _(pandas).pluck('nick');

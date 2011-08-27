@@ -2,27 +2,6 @@ var game = require('./game')
   , uid = require('./uid')
   , _ = require('underscore');
 
-
-function serializeState(state) {
-  var serializedState = {};
-  if (state.pandas && state.pandas.length > 0) {
-    serializedState.pa = _(state.pandas).map(function(panda) {
-      return [panda.nick, panda.x, panda.y, panda.dir, panda.moving, panda.health, panda.score];
-    });
-  }
-  if (state.projectiles && state.projectiles.length > 0) {
-    serializedState.pr = _(state.projectiles).map(function(proj) {
-      return [proj.x, proj.y, proj.dir];
-    });
-  }
-  if (state.explosions && state.explosions.length > 0) {
-    serializedState.e = _(state.explosions).map(function(exp) {
-      return [exp.x, exp.y];
-    });
-  }
-  return serializedState;
-}
-
 module.exports = function(io) {
 
   // Client -> Server
@@ -48,14 +27,14 @@ module.exports = function(io) {
         socket.on('disconnect', function() {
           game.playerLeft(id);
         });
-        callback({status: true, gameState: serializeState(game.getState())});
+        callback({status: true, gameState: game.getState()});
       }
     });
   });
 
   // Server -> Client
   game.on('state', function(state) {
-    io.sockets.volatile.emit('gameState', serializeState(state));
+    io.sockets.volatile.emit('gameState', state);
   });
   
 };
