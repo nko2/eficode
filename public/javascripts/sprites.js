@@ -35,41 +35,38 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 };
 
 Animated.prototype.update = function(msDuration) {
-	if (this.moving === 0) {
-		this.image = this.imageGroups[0][this.dir];
-	} else {
-        this.ticksSinceLastImageChange += 1;
-        if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
-            var nextImage = this.currentImage + 1;
+    this.ticksSinceLastImageChange += 1;
+    if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
+        var nextImage = this.currentImage + 1;
 
-            if (nextImage >= this.imageGroups[this.dir].length) {
-                nextImage = 0;
-            }
-
-            this.image = this.imageGroups[this.dir][nextImage];
-            this.currentImage = nextImage;
-            this.ticksSinceLastImageChange = 0;
-            this.directionChanged = false;
+        if (nextImage >= this.imageGroups[this.dir].length) {
+            nextImage = 0;
         }
 
-        if (this.statusUpdated === false && this.moving) {
-            if (this.dir == 1 || this.dir == 2) {
-                var multiplier = (this.dir == 1) ? -1 : 1;
-                this.rect.top = this.rect.top + multiplier * msDuration/1000;
-            } else {
-                var multiplier = (this.dir == 3) ? -1 : 1;
-                this.rect.left = this.rect.left + multiplier * msDuration/1000;
-            }
-        }
-
-        this.statusUpdated = false;
+        this.image = this.imageGroups[this.dir][nextImage];
+        this.currentImage = nextImage;
+        this.ticksSinceLastImageChange = 0;
+        this.directionChanged = false;
     }
+
+    if (this.statusUpdated === false && this.moving) {
+        if (this.dir == 1 || this.dir == 2) {
+            var multiplier = (this.dir == 1) ? -1 : 1;
+            this.rect.top = this.rect.top + multiplier * msDuration/1000;
+        } else {
+            var multiplier = (this.dir == 3) ? -1 : 1;
+            this.rect.left = this.rect.left + multiplier * msDuration/1000;
+        }
+    }
+
+    this.statusUpdated = false;
 };
 
 var Panda = function() {
 	Panda.superConstructor.apply(this, arguments);
-  this.dir = 0;
-	this.health = 0;
+    this.dir = 0;
+	this.health = params.pandaStartHealth;
+    this.alive = 1;
 	
 	var origRight1 = gamejs.image.load("images/panda_side_1.png");
 	var origRight2 = gamejs.image.load("images/panda_side_2.png");
@@ -81,6 +78,7 @@ var Panda = function() {
 	var sittingUp = gamejs.image.load("images/panda_sitting_up.png");
 	var sittingRight = gamejs.image.load("images/panda_sitting_right.png");
 	var sittingLeft = gamejs.transform.flip(sittingRight, true);
+    this.deadImage = gamejs.image.load("images/dead_panda.png");
 	
 	this.imageGroups = [
 		/* NONE */	[sittingDown, sittingUp, sittingDown, sittingLeft, sittingRight],
@@ -92,15 +90,38 @@ var Panda = function() {
 };
 gamejs.utils.objects.extend(Panda, Animated);
 
+Panda.prototype.update = function(msDuration) {
+    if (!this.alive) {
+        this.image = this.deadImage;
+    } else if (this.moving === 0) {
+        this.image = this.imageGroups[0][this.dir];
+    } else {
+        Animated.prototype.update.call(this, msDuration);
+    }
+};
+
 Panda.prototype.setHealth = function(health) {
   this.health = health;
 };
+
+Panda.prototype.respawn = function() {
+    this.alive = 1;
+    var newPos = movement.findNewPosForPanda(pandas);
+    panda.x = newPos.x;
+    panda.y = newPos.y;
+    panda.moving = 0;
+    panda.health = params.pandaStartHealth;
+}
+
+Panda.prototype.die = function() {
+    this.alive = 0;
+    this.respawnTicks = 30;
+}
 
 Panda.prototype.draw = function(mainSurface) {
   mainSurface.blit(this.image, this.rect);
   
   var healthBarWidth = Math.floor(this.health / 100 * 15);
-  console.log(healthBarWidth);
   var srArray = new gamejs.surfacearray.SurfaceArray([healthBarWidth, 4]);
   
   for (var x = 0; x < healthBarWidth; x++) {

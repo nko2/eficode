@@ -10,14 +10,15 @@ var evt = require('events')
 
 game.playerJoined = function(id, nick) {
   var playerPos = movement.findNewPosForPanda(pandas);
-  pandas[id] = {
+   pandas[id] = {
     nick: nick,
     x: playerPos.x,
     y: playerPos.y,
     dir: params.Direction.NONE,
     moving: 0,
     health: params.pandaStartHealth,
-    score: 0
+    score: 0,
+    alive: 1
   };
 };
 game.playerLeft = function(id) {
@@ -99,14 +100,10 @@ function detectExplosions() {
     explosions.push({x: panda.x, y: panda.y, age: 0});
     panda.health -= params.projectileDamage;
     if (panda.health <= 0) {
-        var newPos = movement.findNewPosForPanda(pandas);
+        panda.die()
         if (shooter) {
             shooter.score += params.projectileKillScore;
         }
-        panda.x = newPos.x;
-        panda.y = newPos.y;
-        panda.moving = 0;
-        panda.health = params.pandaStartHealth;
     }
   });
 };

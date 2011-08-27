@@ -21,6 +21,13 @@ movement = {
   
   updatePandaPosition: function(panda, allPandas) {
     var speed = params.Speed.PANDA;
+    if (panda.alive !== 1) {
+        panda.respawnTicks -= 1;
+        if (panda.respawnTicks === 0) {
+            panda.respawn();
+        }
+        return;
+    }
 
     if (!panda.moving) return;
 
