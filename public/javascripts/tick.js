@@ -85,7 +85,8 @@ var start = function(display, socket) {
 		projectiles = new gamejs.sprite.Group();
 		
     $('#player-list').empty();
-
+		var allPandasInState = {};
+		
 		_(state).each(function(player) {
 			switch (player.type) {
 				case 'PROJECTILE':
@@ -94,12 +95,19 @@ var start = function(display, socket) {
 					
 				case 'PANDA':
 					handlePanda(player);
+					allPandasInState[player.nick] = true;
 					break;
 					
 				default:
 					break;
 			}
     });
+
+		_(allAnimals).each(function(animals, nick) {
+			if (allPandasInState[nick] === undefined) {
+				delete allAnimals[nick];
+			}
+		});
   });
 
 	var grass = new gamejs.sprite.Group();
