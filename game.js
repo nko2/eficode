@@ -9,7 +9,7 @@ var evt = require('events')
   , explosions = [];
 
 game.playerJoined = function(id, nick) {
-  var playerPos = movement.findPosForNewPanda(pandas);
+  var playerPos = movement.findNewPosForPanda(pandas);
   pandas[id] = {
     nick: nick,
     x: playerPos.x,
@@ -99,11 +99,12 @@ function detectExplosions() {
     explosions.push({x: panda.x, y: panda.y, age: 0});
     panda.health -= params.projectileDamage;
     if (panda.health <= 0) {
+        var newPos = movement.findNewPosForPanda(pandas);
         if (shooter) {
             shooter.score += params.projectileKillScore;
         }
-        panda.x = 1;
-        panda.y = 1;
+        panda.x = newPos.x;
+        panda.y = newPos.y;
         panda.moving = 0;
         panda.health = params.pandaStartHealth;
     }

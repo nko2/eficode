@@ -70,7 +70,7 @@ movement = {
     _(projectiles).each(this.updateProjectilePosition);
   },
   
-  findPosForNewPanda: function(pandas) {
+  findNewPosForPanda: function(pandas) {
     var maxX = params.gameWidth - params.pandaWidth
       , maxY = params.gameHeight - params.pandaHeight
       , tries = 0
