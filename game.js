@@ -34,10 +34,13 @@ game.playerFired = function(id) {
     return;
   }
   var panda = pandas[id]
+    , projectileDimensions = getProjectileDimensions(panda.dir)
     , x = panda.x
     , y = panda.y;
   switch (panda.dir) {
+    case params.Direction.UP: y = panda.y - projectileDimensions[1]; break;
     case params.Direction.DOWN: y = panda.y + params.pandaHeight; break;
+    case params.Direction.LEFT: x = panda.x - projectileDimensions[0]; break;
     case params.Direction.RIGHT: x = panda.x + params.pandaWidth; break;
   }
   projectiles[id] = {type: 'PROJECTILE', x: x, y: y, dir: panda.dir};
