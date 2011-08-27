@@ -43,8 +43,14 @@ game.playerFired = function(id) {
     case params.Direction.LEFT: x -= projectileDimensions[0]; break;
     case params.Direction.RIGHT: x += params.pandaWidth; break;
   }
-  projectiles[id] = {x: x, y: y, dir: panda.dir};
+  switch (panda.dir) {
+      case params.Direction.UP: ;
+      case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions[0] / 2));  break;
+      default: y += ((params.pandaHeight / 2) - (projectileDimensions[1] / 2));break;
+  }
+  projectiles[id] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir};
 };
+
 game.getState = function() {
   return {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions};
 };
