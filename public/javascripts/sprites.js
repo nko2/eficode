@@ -11,7 +11,7 @@ var Animated = function() {
 	this.images = [];
 	this.currentImage = -1;
 	this.ticksSinceLastImageChange = -2;
-	this.moving = false;
+	this.moving = 0;
 	this.directionChanged = false;
 	this.dir = -1;
 	this.stateUpdated = false;
@@ -34,7 +34,7 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 };
 
 Animated.prototype.update = function(msDuration) {
-	if (this.moving === false) {
+	if (this.moving === 0) {
 		this.image = this.imageGroups[0][this.dir];
 	} else {
         this.ticksSinceLastImageChange += 1;
@@ -67,6 +67,7 @@ Animated.prototype.update = function(msDuration) {
 
 var Panda = function() {
 	Panda.superConstructor.apply(this, arguments);
+    this.dir = 0;
 	
 	var origRight1 = gamejs.image.load("images/panda_side_1.png");
 	var origRight2 = gamejs.image.load("images/panda_side_2.png");
