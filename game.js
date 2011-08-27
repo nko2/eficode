@@ -1,18 +1,27 @@
 var evt = require('events');
 
 var game = new evt.EventEmitter()
-  , players = {};
+  , state = {};
 
 
 game.playerJoined = function(nick) {
-  players[nick] = {};
+  state[nick] = {};
 };
 game.playerLeft = function(nick) {
-  delete players[nick];
+  delete state[nick];
+};
+game.playerStartedMoving = function(nick, dir) {
+  state[nick]['dir'] = dir;
+};
+game.playerStoppedMoving = function(nick) {
+  delete state[nick]['dir'];
+};
+game.playerFired = function(nick) {
+  console.log(nick, ' fired');
 };
 
 (function gameLoop() {
-  game.emit('state', players);
+  game.emit('state', state);
   setTimeout(gameLoop, 1000);
 })();
 
