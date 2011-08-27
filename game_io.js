@@ -9,20 +9,20 @@ module.exports = function(io) {
       game.playerJoined(id, nick);
       socket.on('startMoving', function(direction, callback) {
         game.playerStartedMoving(id, direction);
-        callback();
+        if (callback) callback();
       });
       socket.on('stopMoving', function(callback) {
         game.playerStoppedMoving(id);
-        callback();
+        if (callback) callback();
       });
       socket.on('fire', function(callback) {
         game.playerFired(id);
-        callback();
+        if (callback) callback();
       });
       socket.on('disconnect', function() {
         game.playerLeft(id);
       });
-      callback();
+      if (callback) callback();
     });
   });
 
