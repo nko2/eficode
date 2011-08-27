@@ -103,6 +103,7 @@ function detectExplosions() {
         panda.x = 1;
         panda.y = 1;
         panda.moving = 0;
+        panda.health = params.pandaStartHealth;
     }
   });
 };
