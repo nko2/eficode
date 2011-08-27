@@ -14,7 +14,8 @@ game.playerJoined = function(id, nick) {
     x: params.gameWidth / 2,
     y: params.gameHeight / 2,
     dir: params.Direction.NONE,
-    moving: 0
+    moving: 0,
+    health: params.pandaStartHealth
   };
 };
 game.playerLeft = function(id) {
@@ -37,13 +38,19 @@ game.playerFired = function(id) {
     , x = panda.x
     , y = panda.y;
   switch (panda.dir) {
-    case params.Direction.UP: y = panda.y - projectileDimensions[1]; break;
-    case params.Direction.DOWN: y = panda.y + params.pandaHeight; break;
-    case params.Direction.LEFT: x = panda.x - projectileDimensions[0]; break;
-    case params.Direction.RIGHT: x = panda.x + params.pandaWidth; break;
+    case params.Direction.UP: y -= projectileDimensions[1]; break;
+    case params.Direction.DOWN: y += params.pandaHeight; break;
+    case params.Direction.LEFT: x -= projectileDimensions[0]; break;
+    case params.Direction.RIGHT: x += params.pandaWidth; break;
   }
-  projectiles[id] = {x: x, y: y, dir: panda.dir};
+  switch (panda.dir) {
+      case params.Direction.UP: ;
+      case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions[0] / 2));  break;
+      default: y += ((params.pandaHeight / 2) - (projectileDimensions[1] / 2));break;
+  }
+  projectiles[id] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir};
 };
+
 game.getState = function() {
   return {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions};
 };
@@ -86,6 +93,7 @@ function detectExplosions() {
       , userId = coll[2];
     delete projectiles[userId];
     explosions.push({x: panda.x, y: panda.y, age: 0});
+    panda.health -= 1;
   });
 };
 
@@ -105,9 +113,9 @@ function removeDistinguishedExplosions() {
   detectExplosions();
   removeProjectilesOutsideGameArea();
   removeDistinguishedExplosions();
-  
+
   game.emit('state', {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions})
-  
+
   setTimeout(gameLoop, 1000 / params.frameRate);
 })();
 

@@ -60,8 +60,8 @@ var start = function(display, socket, gameInit) {
 		return new sprites.Panda();
 	};
 	
-	var handlePanda = function(nick, x, y, dir, moving) {
-		$('#player-list').append($('<li>').text(nick));
+	var handlePanda = function(nick, x, y, dir, moving, health) {
+		$('#player-list').append($('<li>').text(nick + ": " + health));
 		
 		var panda = allAnimals[nick];	
 		if (panda === undefined) {
