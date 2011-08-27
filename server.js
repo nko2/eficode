@@ -4,7 +4,8 @@ var nko = require('nko')('omnfFLVFKjn9/jVm')
   , app = express.createServer()
   , io = require('socket.io').listen(app)
   , gameIo = require('./game_io')
-  , movementFile = fs.readFileSync('./movement.js');
+  , movementFile = fs.readFileSync('./movement.js')
+  , paramsFile = fs.readFileSync('./params.js');
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -29,7 +30,10 @@ app.get('/movement.js', function(req, res) {
   res.writeHead(200, {"Content-Type": "text/javascript"});
   res.end(movementFile);
 })
-
+app.get('/params.js', function(req, res) {
+  res.writeHead(200, {"Content-Type": "text/javascript"});
+  res.end(paramsFile);
+})
 app.listen(3000);
 gameIo(io);
 

@@ -1,4 +1,4 @@
-module.exports = {
+params = {
   gameWidth: 600,
   gameHeight: 600,
   pandaWidth: 15,
@@ -10,3 +10,9 @@ module.exports = {
   Speed: {PANDA: 6, PROJECTILE: 12},
   frameRate: 10
 };
+
+
+// Epic hack
+if (typeof window === 'undefined') {
+  module.exports = params;
+}
