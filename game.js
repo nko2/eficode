@@ -15,7 +15,8 @@ game.playerJoined = function(id, nick) {
     y: params.gameHeight / 2,
     dir: params.Direction.NONE,
     moving: 0,
-    health: params.pandaStartHealth
+    health: params.pandaStartHealth,
+    score: 0
   };
 };
 game.playerLeft = function(id) {
