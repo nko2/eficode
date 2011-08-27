@@ -10,7 +10,6 @@ var evt = require('events')
 
 game.playerJoined = function(id, nick) {
   pandas[id] = {
-    type: 'PANDA',
     nick: nick,
     x: params.gameWidth / 2,
     y: params.gameHeight / 2,
@@ -43,7 +42,7 @@ game.playerFired = function(id) {
     case params.Direction.LEFT: x = panda.x - projectileDimensions[0]; break;
     case params.Direction.RIGHT: x = panda.x + params.pandaWidth; break;
   }
-  projectiles[id] = {type: 'PROJECTILE', x: x, y: y, dir: panda.dir};
+  projectiles[id] = {x: x, y: y, dir: panda.dir};
 };
 
 function isInsideGameArea(el) {
@@ -80,7 +79,7 @@ function detectExplosions() {
       , proj = coll[1]
       , userId = coll[2];
     delete projectiles[userId];
-    explosions.push({type: 'EXPLOSION', x: panda.x, y: panda.y, age: 0});
+    explosions.push({x: panda.x, y: panda.y, age: 0});
   });
 };
 

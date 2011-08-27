@@ -56,12 +56,8 @@ var start = function(display, socket) {
 		}
 	};
 	
-	var createAnimal = function(player) {
-		if (player.type == "PANDA") {
-			return new sprites.Panda();
-		} else {
-			return null;
-		}
+	var createPanda = function(player) {
+		return new sprites.Panda();
 	};
 	
 	var handlePanda = function(pandaState) {
@@ -69,7 +65,7 @@ var start = function(display, socket) {
 		
 		var panda = allAnimals[pandaState.nick];	
 		if (panda === undefined) {
-			panda = allAnimals[pandaState.nick] = createAnimal(pandaState);
+			panda = allAnimals[pandaState.nick] = createPanda(pandaState);
 		}
 		
 		panda.updateState(pandaState.x, pandaState.y, pandaState.dir, pandaState.moving);
