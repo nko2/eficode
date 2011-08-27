@@ -1,8 +1,16 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }
 
-a {
-  color: #00B7FF;
+#sidebar {
+  border: 1px solid black;
+  float: left;
+  width: 200px;
+}
+
+#game {
+  border: 1px solid red;
+  float: right;
 }
