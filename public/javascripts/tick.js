@@ -39,6 +39,12 @@ var start = function(display, socket, gameInit) {
 			var direction = getDirectionValue(key);
 		
 			if (direction !== -1 && currentDirection !== direction) {
+			  if (currentDirection !== -1) {
+			    socket.emit('stopMoving', function() {
+			      
+			    });
+			  }
+			  
 				currentDirection = direction;
 			
 				socket.emit('startMoving', direction, function() {
@@ -60,15 +66,16 @@ var start = function(display, socket, gameInit) {
 		return new sprites.Panda();
 	};
 	
-	var handlePanda = function(nick, x, y, dir, moving, health) {
-		$('#player-list').append($('<li>').text(nick + ": " + health));
+	var handlePanda = function(nick, x, y, dir, moving, health, score) {
+		$('#player-list').append($('<li>').text(nick + ": " + health + " - " + score));
 		
-		var panda = allAnimals[nick];	
+		var panda = allAnimals[nick];
 		if (panda === undefined) {
 			panda = allAnimals[nick] = createPanda();
 		}
 		
 		panda.updateState(x, y, dir, moving);
+		panda.setHealth(health);
 	};
 	
 	var handleProjectile = function(x, y, dir) {
@@ -97,7 +104,7 @@ var start = function(display, socket, gameInit) {
   	});
     _(state.e).each(function(expl) {
       handleExplosion.apply(null, expl);
-    });  
+    });
 
 		_(allAnimals).each(function(animals, nick) {
 			if (allPandasInState[nick] === undefined) {
@@ -124,17 +131,30 @@ var start = function(display, socket, gameInit) {
 		projectiles.update(msDuration);
 		projectiles.draw(mainSurface);
 		
+		var eventsByType = {};
+		eventsByType[gamejs.event.KEY_DOWN] = [];
+		eventsByType[gamejs.event.KEY_UP] = [];
+		
 		gamejs.event.get().forEach(function(e) {
-			if (e.type == gamejs.event.KEY_DOWN) {
-				handleKeyDown(e.key);
-			} else if (e.type == gamejs.event.KEY_UP) {
-				handleKeyUp(e.key);
+			if (e.type == gamejs.event.KEY_DOWN || e.type == gamejs.event.KEY_UP) {
+				eventsByType[e.type].push(e);
 			}
 		});
 		
-		_(allAnimals).each(function(animals, animalId) {
-			allAnimals[animalId].update(msDuration);
-			allAnimals[animalId].draw(mainSurface);
+		if (eventsByType[gamejs.event.KEY_UP].length > 0) {
+		  var e = eventsByType[gamejs.event.KEY_UP][0];
+		  handleKeyUp(e.key);
+		}
+		
+		if (eventsByType[gamejs.event.KEY_DOWN].length > 0) {
+		  _(eventsByType[gamejs.event.KEY_DOWN]).each(function(e) {
+		    handleKeyDown(e.key);
+		  });
+		}
+		
+		_(allAnimals).each(function(animal, animalId) {
+			animal.update(msDuration);
+			animal.draw(mainSurface);
 		});
 		
 		

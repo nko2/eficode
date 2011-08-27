@@ -16,7 +16,8 @@ game.playerJoined = function(id, nick) {
     y: playerPos.y,
     dir: params.Direction.NONE,
     moving: 0,
-    health: params.pandaStartHealth
+    health: params.pandaStartHealth,
+    score: 0
   };
 };
 game.playerLeft = function(id) {
@@ -49,7 +50,7 @@ game.playerFired = function(id) {
       case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions[0] / 2));  break;
       default: y += ((params.pandaHeight / 2) - (projectileDimensions[1] / 2));break;
   }
-  projectiles[id] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir};
+  projectiles[id] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir, owner: id};
 };
 
 game.getState = function() {
@@ -92,10 +93,20 @@ function detectExplosions() {
   _(collisions).each(function(coll) {
     var panda = coll[0]
       , proj = coll[1]
-      , userId = coll[2];
+      , userId = coll[2]
+      , shooter = pandas[proj.owner];
     delete projectiles[userId];
     explosions.push({x: panda.x, y: panda.y, age: 0});
-    panda.health -= 1;
+    panda.health -= params.projectileDamage;
+    if (panda.health <= 0) {
+        if (shooter) {
+            shooter.score += params.projectileKillScore;
+        }
+        panda.x = 1;
+        panda.y = 1;
+        panda.moving = 0;
+        panda.health = params.pandaStartHealth;
+    }
   });
 };
 
