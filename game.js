@@ -35,10 +35,10 @@ game.playerFired = function(id) {
     , y = panda.y
     , ammunation_speed = 15;
   switch (panda.dir) {
-    case params.Direction.UP:     y = panda.y - ammunation_speed; break;
-    case params.Direction.DOWN:   y = panda.y + ammunation_speed; break;
-    case params.Direction.LEFT:   x = panda.x - ammunation_speed; break;
-    case params.Direction.RIGHT:  x = panda.x + ammunation_speed; break;
+    case params.Direction.UP:     y -= ammunation_speed; break;
+    case params.Direction.DOWN:   y += ammunation_speed; break;
+    case params.Direction.LEFT:   x -= ammunation_speed; break;
+    case params.Direction.RIGHT:  x += ammunation_speed; break;
   }
   projectiles.push({type: 'PROJECTILE', x: x, y: y, dir: panda.dir});
 };
