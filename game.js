@@ -3,9 +3,10 @@ var evt = require('events')
   , gameWidth = 600, gameHeight = 600
   , pandaWidth = 15, pandaHeight = 15
   , projectileWidth = 10, projectileHeight = 5
+  , explosionDuration = 2000
   , Direction = {NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4}
   , Speed = {PANDA: 10, PROJECTILE: 20}
-  , frameRate = 3
+  , frameRate = 4
   , game = new evt.EventEmitter()
   , pandas = {}
   , projectiles = []
@@ -107,15 +108,27 @@ function detectExplosions() {
     var panda = coll[0]
       , proj = coll[1]
     projectiles = _(projectiles).without(proj);
-    explosions.push({x: panda.x, y: panda.y});
+    explosions.push({x: panda.x, y: panda.y, age: 0});
   });
 };
+
+function removeDistinguishedExplosions() {
+  explosions = _(explosions).select(function(e) {
+    if (e.age > explosionDuration) {
+      return false;
+    } else {
+      e.age += 1000 / frameRate;
+      return true;
+    }
+  });
+}
 
 (function gameLoop() {
   updatePositions();
   detectExplosions();
+  removeDistinguishedExplosions();
   
-  var state = _(pandas).values().concat(projectiles);
+  var state = _(pandas).values().concat(projectiles).concat(explosions);
   game.emit('state', state);
   
   setTimeout(gameLoop, 1000 / frameRate);
