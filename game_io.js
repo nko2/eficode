@@ -1,4 +1,26 @@
-var game = require('./game');
+var game = require('./game')
+  , _ = require('underscore');
+
+
+function serializeState(state) {
+  var serializedState = {};
+  if (state.pandas && state.pandas.length > 0) {
+    serializedState.pa = _(state.pandas).map(function(panda) {
+      return [panda.nick, panda.x, panda.y, panda.dir, panda.moving];
+    });
+  }
+  if (state.projectiles && state.projectiles.length > 0) {
+    serializedState.pr = _(state.projectiles).map(function(proj) {
+      return [proj.x, proj.y, proj.dir];
+    });
+  }
+  if (state.explosions && state.explosions.length > 0) {
+    serializedState.e = _(state.explosions).map(function(exp) {
+      return [exp.x, exp.y];
+    });
+  }
+  return serializedState;
+}
 
 module.exports = function(io) {
 
@@ -28,7 +50,7 @@ module.exports = function(io) {
 
   // Server -> Client
   game.on('state', function(state) {
-    io.sockets.volatile.emit('gameState', state);
+    io.sockets.volatile.emit('gameState', serializeState(state));
   });
   
 };

@@ -56,30 +56,29 @@ var start = function(display, socket) {
 		}
 	};
 	
-	var createPanda = function(player) {
+	var createPanda = function() {
 		return new sprites.Panda();
 	};
 	
-	var handlePanda = function(pandaState) {
-		$('#player-list').append($('<li>').text(pandaState.nick));
+	var handlePanda = function(nick, x, y, dir, moving) {
+		$('#player-list').append($('<li>').text(nick));
 		
-		var panda = allAnimals[pandaState.nick];	
+		var panda = allAnimals[nick];	
 		if (panda === undefined) {
-			panda = allAnimals[pandaState.nick] = createPanda(pandaState);
+			panda = allAnimals[nick] = createPanda();
 		}
 		
-		panda.updateState(pandaState.x, pandaState.y, pandaState.dir, pandaState.moving);
+		panda.updateState(x, y, dir, moving);
 	};
 	
-	var handleProjectile = function(projectileState) {
+	var handleProjectile = function(x, y, dir) {
 		var proj = new sprites.Projectile();
-		proj.updateState(projectileState.x, projectileState.y, projectileState.dir, projectileState.moving);
-		
+		proj.updateState(x, y, dir, true);
 		projectiles.add(proj);
 	};
 	
-	var handleExplosion = function(explosionState) {
-		explosions.add(new sprites.Bloodsplash([explosionState.x, explosionState.y]));
+	var handleExplosion = function(x, y) {
+		explosions.add(new sprites.Bloodsplash([x, y]));
 	};
 	
 	socket.on('gameState', function(state) {
@@ -89,15 +88,15 @@ var start = function(display, socket) {
     $('#player-list').empty();
 		var allPandasInState = {};
 		
-		_(state.pandas).each(function(panda) {
-			handlePanda(panda);
-			allPandasInState[panda.nick] = true;
+		_(state.pa).each(function(panda) {
+			handlePanda.apply(null, panda);
+			allPandasInState[panda[0]] = true;
 		});
-  	_(state.projs).each(function(proj) {
-  		handleProjectile(proj);
+  	_(state.pr).each(function(proj) {
+  		handleProjectile.apply(null, proj);
   	});
-    _(state.expl).each(function(expl) {
-      handleExplosion(expl);
+    _(state.e).each(function(expl) {
+      handleExplosion.apply(null, expl);
     });  
 
 		_(allAnimals).each(function(animals, nick) {
