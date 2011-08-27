@@ -49,7 +49,7 @@ game.playerFired = function(id) {
       case params.Direction.DOWN: x += ((params.pandaWidth / 2) - (projectileDimensions[0] / 2));  break;
       default: y += ((params.pandaHeight / 2) - (projectileDimensions[1] / 2));break;
   }
-  projectiles[id] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir};
+  projectiles[id] = {x: Math.floor(x), y: Math.floor(y), dir: panda.dir, owner: id};
 };
 
 game.getState = function() {
