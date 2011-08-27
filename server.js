@@ -1,7 +1,8 @@
 var nko = require('nko')('omnfFLVFKjn9/jVm')
   , express = require('express')
   , app = express.createServer()
-  , io = require('socket.io').listen(app);
+  , io = require('socket.io').listen(app)
+  , game = require('./game');
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -26,8 +27,23 @@ app.get('/', function(req, res){
 });
 
 io.sockets.on('connection', function(socket) {
-  socket.emit('ack', 'Hello');
+  socket.on('setnick', function(nick, cb) {
+    socket.set('nick', nick, function() {
+      game.playerJoined(nick);
+      cb();
+    })
+  });
+  socket.on('disconnect', function() {
+    socket.get('nick', function(err, nick) {
+      game.playerLeft(nick);
+    });
+  });
 });
+
+game.on('state', function(state) {
+  io.sockets.emit('gameState', state);
+});
+
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
