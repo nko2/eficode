@@ -4,7 +4,8 @@ var evt = require('events')
   , Speed = {PANDA: 10, PROJECTILE: 20}
   , frameRate = 2
   , game = new evt.EventEmitter()
-  , state = {};
+  , pandas = {}
+  , projectiles = [];
 
 function updateElementPosition(el) {
   var speed = Speed[el.type]
@@ -17,28 +18,31 @@ function updateElementPosition(el) {
 }
 
 function updatePositions() {
-  _(state).each(updateElementPosition);
+  _(pandas).each(updateElementPosition);
 };
 
 game.playerJoined = function(nick) {
-  state[nick] = {type: 'PANDA', x: 0, y: 0, dir: Direction.NONE};
+  pandas[nick] = {type: 'PANDA', nick: nick, x: 0, y: 0, dir: Direction.NONE};
 };
 game.playerLeft = function(nick) {
-  delete state[nick];
+  delete pandas[nick];
 };
 game.playerStartedMoving = function(nick, dir) {
-  state[nick]['dir'] = dir;
+  pandas[nick]['dir'] = dir;
 };
 game.playerStoppedMoving = function(nick) {
-  state[nick]['dir'] = Direction.NONE;
+  pandas[nick]['dir'] = Direction.NONE;
 };
 game.playerFired = function(nick) {
-  console.log(nick, ' fired');
+  
 };
 
 (function gameLoop() {
   updatePositions();
+  
+  var state = _(pandas).values().concat(projectiles);
   game.emit('state', state);
+  
   setTimeout(gameLoop, 1000 / frameRate);
 })();
 
