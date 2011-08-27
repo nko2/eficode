@@ -1,5 +1,4 @@
-var evt = require('events')
-  , _ = require('underscore');
+var evt = require('events');
 
 var game = new evt.EventEmitter()
   , players = {};
