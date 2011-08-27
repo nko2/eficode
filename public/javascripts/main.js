@@ -15,6 +15,7 @@ $(function() {
     $('#login').hide();
     $('#main').show();
     gameCanvas.fitToWindow();
+    gameCanvas.startRenderLoop();
   };
   
   $('#start').click(function() {
