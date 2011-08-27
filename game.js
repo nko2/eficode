@@ -96,14 +96,12 @@ function removeDistinguishedExplosions() {
 }
 
 (function gameLoop() {
-  var pandasAndProjectiles = _(pandas).values().concat(_(projectiles).values());
-  
-  movement.updatePositions(pandasAndProjectiles);
+  movement.updatePositions(pandas, projectiles);
   detectExplosions();
   removeProjectilesOutsideGameArea();
   removeDistinguishedExplosions();
   
-  game.emit('state', pandasAndProjectiles.concat(explosions));
+  game.emit('state', {pandas: _(pandas).values(), projs: _(projectiles).values(), expl: explosions})
   
   setTimeout(gameLoop, 1000 / params.frameRate);
 })();

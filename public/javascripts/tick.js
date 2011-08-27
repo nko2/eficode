@@ -87,20 +87,12 @@ var start = function(display, socket) {
     $('#player-list').empty();
 		var allPandasInState = {};
 		
-		_(state).each(function(player) {
-			switch (player.type) {
-				case 'PROJECTILE':
-					handleProjectile(player);
-					break;
-					
-				case 'PANDA':
-					handlePanda(player);
-					allPandasInState[player.nick] = true;
-					break;
-					
-				default:
-					break;
-			}
+		_(state.pandas).each(function(panda) {
+			handlePanda(panda);
+			allPandasInState[panda.nick] = true;
+		});
+  	_(state.projs).each(function(proj) {
+  		handleProjectile(proj);
     });
 
 		_(allAnimals).each(function(animals, nick) {
