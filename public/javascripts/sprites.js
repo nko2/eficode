@@ -1,35 +1,90 @@
 var gamejs = require('gamejs');
 
-var Animal = function(rect) {
-	Animal.superConstructor.apply(this, arguments);
-	this.rect = new gamejs.Rect(rect);
+/* ============================================================================
+ * Animated
+ * ============================================================================ */
+
+var Animated = function() {
+	Animated.superConstructor.apply(this, arguments);
+	this.rect = new gamejs.Rect([0,0]);
 	this.image = null;
 	this.images = [];
+	this.currentImage = 0;
+	this.ticksSinceLastImageChange = -2;
+	this.moving = false;
+	this.directionChanged = false;
+	this.dir = -1;
 	
 	return this;
 };
-gamejs.utils.objects.extend(Animal, gamejs.sprite.Sprite);
+gamejs.utils.objects.extend(Animated, gamejs.sprite.Sprite);
 
-Animal.prototype.setDirection = function(val) {
-	this.image = this.images[val];
-};
-
-Animal.prototype.move = function(x, y, dir) {
-	this.setDirection(dir);
+Animated.prototype.updateState = function(x, y, dir, moving) {
+	if (dir !== this.dir) {
+		this.directionChanged = true;
+	}
+	
 	this.rect.left = x;
 	this.rect.top = y;
+	this.dir = dir;
+	this.moving = moving;
+	this.images = this.imageGroups[this.dir];
 };
 
-var Panda = function(rect) {
+Animated.prototype.update = function(msDuration) {
+	if (this.moving === false) {
+		this.currentImage = -1;
+	}
+	
+	this.ticksSinceLastImageChange += 1;
+	if (this.ticksSinceLastImageChange > 3 || this.directionChanged) {
+		var nextImage = this.currentImage + 1;
+		
+		if (nextImage == this.images.length) {
+			nextImage = 0;
+		}
+		
+		this.image = this.images[nextImage];
+		this.currentImage = nextImage;
+	}
+};
+
+var Panda = function() {
 	Panda.superConstructor.apply(this, arguments);
-	this.images[0] = gamejs.image.load("images/panda_sitting.png");
-	this.images[1] = gamejs.image.load("images/panda_up.png");
-	this.images[2] = gamejs.image.load("images/panda_down.png");
-	this.images[3] = gamejs.image.load("images/panda_left.png");
-	this.images[4] = gamejs.image.load("images/panda_right.png");
+	
+	var origRight1 = gamejs.image.load("images/panda_side_1.png");
+	var origRight2 = gamejs.image.load("images/panda_side_2.png");
+	var origUp1 = gamejs.image.load("images/panda_up_1.png");
+	var origUp2 = gamejs.image.load("images/panda_up_2.png");
+	var origDown1 = gamejs.image.load("images/panda_down_1.png");
+	var origDown2 = gamejs.image.load("images/panda_down_2.png");
+	
+	this.imageGroups = [
+		/* NONE */	[gamejs.image.load("images/panda_sitting.png")],
+		/* UP */    [origUp1, origUp2, gamejs.transform.flip(origUp1, true)],
+		/* DOWN */  [origDown1, origDown2, gamejs.transform.flip(origDown1, true)],
+		/* LEFT */  [gamejs.transform.flip(origRight1, true), gamejs.transform.flip(origRight2, true)],
+		/* RIGHT */ [origRight1, origRight2]
+	];
 };
-gamejs.utils.objects.extend(Panda, Animal);
+gamejs.utils.objects.extend(Panda, Animated);
 
+
+var Projectile = function() {
+	Projectile.superConstructor.apply(this, arguments);
+	
+	var orig1 = gamejs.image.load("images/flame_bolt_vert_1.png");
+	var orig2 = gamejs.image.load("images/flame_bolt_vert_1.png");
+	
+	this.imageGroups = [
+		/* NONE */	[orig1],
+		/* UP */    [orig1, orig2],
+		/* DOWN */  [orig1, orig2],
+		/* LEFT */  [gamejs.transform.rotate(orig1, 90), gamejs.transform.rotate(orig2, 90)],
+		/* RIGHT */ [gamejs.transform.rotate(orig1, 90), gamejs.transform.rotate(orig2, 90)]
+	];
+};
+gamejs.utils.objects.extend(Projectile, Animated);
 
 var Grass = function(rect) {
 	Grass.superConstructor.apply(this, arguments);
@@ -42,3 +97,4 @@ gamejs.utils.objects.extend(Grass, gamejs.sprite.Sprite);
 
 exports.Panda = Panda;
 exports.Grass = Grass;
+exports.Projectile = Projectile;
