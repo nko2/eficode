@@ -30,8 +30,16 @@ game.playerStoppedMoving = function(id) {
   pandas[id]['moving'] = false;
 };
 game.playerFired = function(id) {
-  var panda = pandas[id];
-  projectiles.push({type: 'PROJECTILE', x: panda.x, y: panda.y, dir: panda.dir});
+  var panda = pandas[id]
+    , x = panda.x
+    , y = panda.y;
+  switch (panda.dir) {
+    case params.Direction.UP:     y = panda.y - 15; break;
+    case params.Direction.DOWN:   y = panda.y + 15; break;
+    case params.Direction.LEFT:   x = panda.x - 15; break;
+    case params.Direction.RIGHT:  x = panda.x + 15; break;
+  }
+  projectiles.push({type: 'PROJECTILE', x: x, y: y, dir: panda.dir});
 };
 
 function isInsideGameArea(el) {
@@ -62,7 +70,7 @@ function detectExplosions() {
     var panda = coll[0]
       , proj = coll[1]
     projectiles = _(projectiles).without(proj);
-    explosions.push({x: panda.x, y: panda.y, age: 0});
+    explosions.push({type: 'EXPLOSION', x: panda.x, y: panda.y, age: 0});
   });
 };
 
