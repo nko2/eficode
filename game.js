@@ -1,9 +1,7 @@
 var evt = require('events')
   , _ = require('underscore')
-  , gameWidth = 600
-  , gameHeight = 600
-  , pandaWidth = 15
-  , pandaHeight = 15
+  , gameWidth = 600, gameHeight = 600
+  , pandaWidth = 15, pandaHeight = 15
   , Direction = {NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4}
   , Speed = {PANDA: 10, PROJECTILE: 20}
   , frameRate = 3
@@ -12,47 +10,58 @@ var evt = require('events')
   , projectiles = [];
 
 game.playerJoined = function(id, nick) {
-  pandas[id] = {type: 'PANDA', nick: nick, x: gameWidth / 2, y: gameHeight / 2, dir: Direction.NONE};
+  pandas[id] = {
+    type: 'PANDA',
+    nick: nick,
+    x: gameWidth / 2,
+    y: gameHeight / 2,
+    dir: Direction.NONE,
+    moving: false
+  };
 };
 game.playerLeft = function(id) {
   delete pandas[id];
 };
 game.playerStartedMoving = function(id, dir) {
-  pandas[id]['dir'] = dir;
+  var panda = pandas[id];
+  panda.dir = dir;
+  panda.moving = true;
 };
 game.playerStoppedMoving = function(id) {
-  pandas[id]['dir'] = Direction.NONE;
+  pandas[id]['moving'] = false;
 };
 game.playerFired = function(id) {
   var panda = pandas[id];
   projectiles.push({type: 'PROJECTILE', x: panda.x, y: panda.y, dir: panda.dir});
 };
 
-function updatePandaPosition(el) {
+function updatePandaPosition(panda) {
+  if (!panda.moving) return;
+  
   var speed = Speed.PANDA;
-  switch (el.dir) {
+  switch (panda.dir) {
     case Direction.UP:
-      el.y = Math.max(el.y - speed, 0);
+      panda.y = Math.max(panda.y - speed, 0);
       break;
     case Direction.DOWN:
-      el.y = Math.min(el.y + speed, gameHeight - pandaHeight);
+      panda.y = Math.min(panda.y + speed, gameHeight - pandaHeight);
       break;
     case Direction.LEFT:
-      el.x = Math.max(el.x - speed, 0);
+      panda.x = Math.max(panda.x - speed, 0);
       break;
     case Direction.RIGHT:
-      el.x = Math.min(el.x + speed, gameWidth - pandaWidth);
+      panda.x = Math.min(panda.x + speed, gameWidth - pandaWidth);
       break;
   }
 };
 
-function updateProjectilePosition(el) {
+function updateProjectilePosition(p) {
   var speed = Speed.PROJECTILE;
-  switch (el.dir) {
-    case Direction.UP:    el.y -= speed; break;
-    case Direction.DOWN:  el.y += speed; break;
-    case Direction.LEFT:  el.x -= speed; break;
-    case Direction.RIGHT: el.x += speed; break;
+  switch (p.dir) {
+    case Direction.UP:    p.y -= speed; break;
+    case Direction.DOWN:  p.y += speed; break;
+    case Direction.LEFT:  p.x -= speed; break;
+    case Direction.RIGHT: p.x += speed; break;
   }
 };
 
