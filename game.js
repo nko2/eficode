@@ -34,10 +34,8 @@ game.playerFired = function(id) {
     , x = panda.x
     , y = panda.y;
   switch (panda.dir) {
-    case params.Direction.UP:     y = panda.y - 15; break;
-    case params.Direction.DOWN:   y = panda.y + 15; break;
-    case params.Direction.LEFT:   x = panda.x - 15; break;
-    case params.Direction.RIGHT:  x = panda.x + 15; break;
+    case params.Direction.DOWN: y = panda.y + params.pandaHeight; break;
+    case params.Direction.RIGHT: x = panda.x + params.pandaWidth; break;
   }
   projectiles.push({type: 'PROJECTILE', x: x, y: y, dir: panda.dir});
 };
@@ -50,8 +48,8 @@ function removeProjectilesOutsideGameArea() {
   projectiles = _(projectiles).select(isInsideGameArea);
 };
 
-function getProjectileDimensions(proj) {
-  var horizProj   = proj.dir === params.Direction.LEFT || proj.dir === params.Direction.RIGHT
+function getProjectileDimensions(dir) {
+  var horizProj   = dir === params.Direction.LEFT || dir === params.Direction.RIGHT
     , dimensions = [params.projectileWidth, params.projectileHeight];
   return horizProj ? dimensions : dimensions.reverse();
 };
@@ -59,7 +57,7 @@ function getProjectileDimensions(proj) {
 function detectExplosions() {
   var collisions = [];
   _(projectiles).each(function(proj) {
-    var projDim = getProjectileDimensions(proj);
+    var projDim = getProjectileDimensions(proj.dir);
     _(pandas).each(function (panda) {
       if (geom.isRectangleIntersection(proj.x, proj.y, projDim[0], projDim[1], panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
         collisions.push([panda, proj]);

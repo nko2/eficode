@@ -8,5 +8,5 @@ module.exports = {
   explosionDuration: 2000,
   Direction: {NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4},
   Speed: {PANDA: 6, PROJECTILE: 12},
-  frameRate: 25
+  frameRate: 10
 };
