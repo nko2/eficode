@@ -5,7 +5,7 @@ $(document).ready(function() {
 	var socket = io.connect();
 
 	var main = function(gameInit) {
-		$("#login").hide();
+		$("#login").remove();
 		$("#main").show();
 
 		display = gamejs.display.setMode([600, 600]);
