@@ -1,4 +1,5 @@
 var game = require('./game')
+  , uid = require('./uid')
   , _ = require('underscore');
 
 
@@ -30,7 +31,7 @@ module.exports = function(io) {
       if (_(game.getNicks()).include(nick)) {
         callback({status: false});
       } else {
-        var id = '' + new Date().getTime() + Math.random();
+        var id = uid();
         game.playerJoined(id, nick);
         socket.on('startMoving', function(direction, callback) {
           game.playerStartedMoving(id, direction);
