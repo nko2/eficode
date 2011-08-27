@@ -9,7 +9,7 @@ var Animated = function() {
 	this.rect = new gamejs.Rect([0,0]);
 	this.image = null;
 	this.images = [];
-	this.currentImage = 0;
+	this.currentImage = -1;
 	this.ticksSinceLastImageChange = -2;
 	this.moving = false;
 	this.directionChanged = false;
@@ -22,13 +22,13 @@ gamejs.utils.objects.extend(Animated, gamejs.sprite.Sprite);
 Animated.prototype.updateState = function(x, y, dir, moving) {
 	if (dir !== this.dir) {
 		this.directionChanged = true;
+		this.currentImage = -1;
 	}
 	
 	this.rect.left = x;
 	this.rect.top = y;
 	this.dir = dir;
 	this.moving = moving;
-	this.images = this.imageGroups[this.dir];
 };
 
 Animated.prototype.update = function(msDuration) {
@@ -37,15 +37,17 @@ Animated.prototype.update = function(msDuration) {
 	}
 	
 	this.ticksSinceLastImageChange += 1;
-	if (this.ticksSinceLastImageChange > 3 || this.directionChanged) {
+	if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
 		var nextImage = this.currentImage + 1;
 		
-		if (nextImage == this.images.length) {
+		if (nextImage >= this.imageGroups[this.dir].length) {
 			nextImage = 0;
 		}
 		
-		this.image = this.images[nextImage];
+		this.image = this.imageGroups[this.dir][nextImage];
 		this.currentImage = nextImage;
+		this.ticksSinceLastImageChange = 0;
+		this.directionChanged = false;
 	}
 };
 
@@ -85,6 +87,12 @@ var Projectile = function() {
 	];
 };
 gamejs.utils.objects.extend(Projectile, Animated);
+
+var Bloodsplash = function(rect) {
+	Bloodsplash.superConstructor.apply(this, arguments);
+	this.rect = new gamejs.Rect(rect);
+	this.image = gamejs.image.load("images/blood_splash.png");
+};
 
 var Grass = function(rect) {
 	Grass.superConstructor.apply(this, arguments);
