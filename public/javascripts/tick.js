@@ -5,6 +5,7 @@ var start = function(display, socket) {
 	var currentDirection = 0;
 	var allAnimals = {};
 	var projectiles = new gamejs.sprite.Group();
+	var explosions = new gamejs.sprite.Group();
 	
 	var getDirectionValue = function(key) {
 		switch (key) {
@@ -81,8 +82,13 @@ var start = function(display, socket) {
 		projectiles.add(proj);
 	};
 	
+	var handleExplosion = function(explosionState) {
+		explosions.add(new sprites.Bloodsplash([explosionState.x, explosionState.y]));
+	};
+	
 	socket.on('gameState', function(state) {
 		projectiles = new gamejs.sprite.Group();
+		explosions  = new gamejs.sprite.Group();
 		
     $('#player-list').empty();
 		var allPandasInState = {};
@@ -96,6 +102,10 @@ var start = function(display, socket) {
 				case 'PANDA':
 					handlePanda(player);
 					allPandasInState[player.nick] = true;
+					break;
+					
+				case 'EXPLOSION':
+					handleExplosion(player);
 					break;
 					
 				default:
@@ -138,6 +148,9 @@ var start = function(display, socket) {
 			allAnimals[animalId].update(msDuration);
 			allAnimals[animalId].draw(mainSurface);
 		});
+		
+		
+		explosions.draw(mainSurface);
 	};
 	
 	gamejs.time.fpsCallback(tick, this, 15);

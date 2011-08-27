@@ -89,15 +89,17 @@ gamejs.utils.objects.extend(Panda, Animated);
 var Projectile = function() {
 	Projectile.superConstructor.apply(this, arguments);
 	
-	var orig1 = gamejs.image.load("images/flame_bolt_vert_1.png");
-	var orig2 = gamejs.image.load("images/flame_bolt_vert_1.png");
+	var origVertical1 = gamejs.image.load("images/flame_bolt_vert_1.png");
+	var origVertical2 = gamejs.image.load("images/flame_bolt_vert_2.png");
+	var origHorizontal1 = gamejs.image.load("images/flame_bolt_horizontal_1.png");
+	var origHorizontal2 = gamejs.image.load("images/flame_bolt_horizontal_2.png");
 	
 	this.imageGroups = [
-		/* NONE */	[orig1],
-		/* UP */    [orig1, orig2],
-		/* DOWN */  [orig1, orig2],
-		/* LEFT */  [gamejs.transform.rotate(orig1, 90), gamejs.transform.rotate(orig2, 90)],
-		/* RIGHT */ [gamejs.transform.rotate(orig1, 90), gamejs.transform.rotate(orig2, 90)]
+		/* NONE */	[origVertical1],
+		/* UP */    [origVertical1, origVertical2],
+		/* DOWN */  [origVertical1, origVertical2],
+		/* LEFT */  [origHorizontal1, origHorizontal2],
+		/* RIGHT */ [origHorizontal1, origHorizontal2]
 	];
 };
 gamejs.utils.objects.extend(Projectile, Animated);
@@ -107,6 +109,7 @@ var Bloodsplash = function(rect) {
 	this.rect = new gamejs.Rect(rect);
 	this.image = gamejs.image.load("images/blood_splash.png");
 };
+gamejs.utils.objects.extend(Bloodsplash, gamejs.sprite.Sprite);
 
 var Grass = function(rect) {
 	Grass.superConstructor.apply(this, arguments);
@@ -120,3 +123,4 @@ gamejs.utils.objects.extend(Grass, gamejs.sprite.Sprite);
 exports.Panda = Panda;
 exports.Grass = Grass;
 exports.Projectile = Projectile;
+exports.Bloodsplash = Bloodsplash;
