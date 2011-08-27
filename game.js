@@ -14,7 +14,8 @@ game.playerJoined = function(id, nick) {
     x: params.gameWidth / 2,
     y: params.gameHeight / 2,
     dir: params.Direction.NONE,
-    moving: 0
+    moving: 0,
+    health: params.pandaStartHealth
   };
 };
 game.playerLeft = function(id) {
@@ -83,6 +84,7 @@ function detectExplosions() {
       , userId = coll[2];
     delete projectiles[userId];
     explosions.push({x: panda.x, y: panda.y, age: 0});
+    panda.health -= 1;
   });
 };
 
