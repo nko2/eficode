@@ -102,9 +102,9 @@ function removeDistinguishedExplosions() {
   detectExplosions();
   removeProjectilesOutsideGameArea();
   removeDistinguishedExplosions();
-  
+
   game.emit('state', {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions})
-  
+
   setTimeout(gameLoop, 1000 / params.frameRate);
 })();
 
