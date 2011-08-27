@@ -1,7 +1,7 @@
 var gamejs = require('gamejs'),
 	sprites = require('sprites');
 
-var start = function(display, socket) {
+var start = function(display, socket, gameInit) {
 	var currentDirection = 0;
 	var allAnimals = {};
 	var projectiles = new gamejs.sprite.Group();
@@ -81,7 +81,7 @@ var start = function(display, socket) {
 		explosions.add(new sprites.Bloodsplash([x, y]));
 	};
 	
-	socket.on('gameState', function(state) {
+	var handleGameState = function(state) {
 		projectiles = new gamejs.sprite.Group();
 		explosions  = new gamejs.sprite.Group();
 		
@@ -103,8 +103,10 @@ var start = function(display, socket) {
 			if (allPandasInState[nick] === undefined) {
 				delete allAnimals[nick];
 			}
-		});
-  });
+		});	  
+	};
+	
+	socket.on('gameState', handleGameState);
 
 	var grass = new gamejs.sprite.Group();
 	var i, j;
@@ -138,7 +140,7 @@ var start = function(display, socket) {
 		
 		explosions.draw(mainSurface);
 	};
-	
+	handleGameState(gameInit);
 	gamejs.time.fpsCallback(tick, this, 15);
 };
 

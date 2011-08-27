@@ -4,16 +4,16 @@ var gamejs = require('gamejs'),
 $(document).ready(function() {
 	var socket = io.connect();
 
-	var main = function() {
+	var main = function(gameInit) {
 		$("#login").hide();
 		$("#main").show();
 
 		display = gamejs.display.setMode([600, 600]);
-		tick.start(display, socket);
+		tick.start(display, socket, gameInit);
 	};
 
     function start() {
-        socket.emit('join', $('#nick').val(), function() {
+        socket.emit('join', $('#nick').val(), function(gameInit) {
             gamejs.preload(
                 ["images/panda_side_1.png", "images/panda_side_2.png",
                  "images/panda_down_1.png", "images/panda_down_2.png",
@@ -24,7 +24,9 @@ $(document).ready(function() {
                  "images/grass_tile.png",
 								 "images/blood_splash.png"
             ]);
-            gamejs.ready(main);
+            gamejs.ready(function() {
+              main(gameInit);
+            });
         });
     };
 

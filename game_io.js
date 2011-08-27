@@ -44,7 +44,7 @@ module.exports = function(io) {
       socket.on('disconnect', function() {
         game.playerLeft(id);
       });
-      if (callback) callback();
+      if (callback) callback(serializeState(game.getState()));
     });
   });
 
