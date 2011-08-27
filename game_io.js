@@ -6,7 +6,7 @@ function serializeState(state) {
   var serializedState = {};
   if (state.pandas && state.pandas.length > 0) {
     serializedState.pa = _(state.pandas).map(function(panda) {
-      return [panda.nick, panda.x, panda.y, panda.dir, panda.moving, panda.health];
+      return [panda.nick, panda.x, panda.y, panda.dir, panda.moving, panda.health, panda.score];
     });
   }
   if (state.projectiles && state.projectiles.length > 0) {
