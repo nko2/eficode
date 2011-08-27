@@ -32,12 +32,13 @@ game.playerStoppedMoving = function(id) {
 game.playerFired = function(id) {
   var panda = pandas[id]
     , x = panda.x
-    , y = panda.y;
+    , y = panda.y
+    , ammunation_speed = 15;
   switch (panda.dir) {
-    case params.Direction.UP:     y = panda.y - 15; break;
-    case params.Direction.DOWN:   y = panda.y + 15; break;
-    case params.Direction.LEFT:   x = panda.x - 15; break;
-    case params.Direction.RIGHT:  x = panda.x + 15; break;
+    case params.Direction.UP:     y -= ammunation_speed; break;
+    case params.Direction.DOWN:   y += ammunation_speed; break;
+    case params.Direction.LEFT:   x -= ammunation_speed; break;
+    case params.Direction.RIGHT:  x += ammunation_speed; break;
   }
   projectiles.push({type: 'PROJECTILE', x: x, y: y, dir: panda.dir});
 };
