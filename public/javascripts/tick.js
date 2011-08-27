@@ -161,7 +161,7 @@ var start = function(display, socket, gameInit) {
 		explosions.draw(mainSurface);
 	};
 	handleGameState(gameInit);
-	gamejs.time.fpsCallback(tick, this, 15);
+	gamejs.time.fpsCallback(tick, this, 25);
 };
 
 exports.start = start;
