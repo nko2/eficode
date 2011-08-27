@@ -52,7 +52,7 @@ game.playerFired = function(id) {
 };
 
 game.getState = function() {
-  return {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions};
+  return {pandas: _(pandas).values(), projectiles: _(projectiles).values(), explosions: explosions};
 };
 game.getNicks = function() {
   return _(pandas).pluck('nick');
@@ -114,7 +114,7 @@ function removeDistinguishedExplosions() {
   removeProjectilesOutsideGameArea();
   removeDistinguishedExplosions();
 
-  game.emit('state', {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions})
+  game.emit('state', {pandas: _(pandas).values(), projectiles: _(projectiles).values(), explosions: explosions})
 
   setTimeout(gameLoop, 1000 / params.frameRate);
 })();
