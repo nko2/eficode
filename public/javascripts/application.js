@@ -31,7 +31,7 @@ $(function() {
   };
   
   $('#start').click(function() {
-    socket.emit('setnick', $('#nick').val(), function(ack) {
+    socket.emit('join', $('#nick').val(), function() {
       startGame();
     });
   });
