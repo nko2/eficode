@@ -44,7 +44,7 @@ function removeProjectilesOutsideGameArea() {
 
 function getProjectileDimensions(proj) {
   var horizProj   = proj.dir === params.Direction.LEFT || proj.dir === params.Direction.RIGHT
-    , dimensions = [projWidth, projHeight];
+    , dimensions = [params.projectileWidth, params.projectileHeight];
   return horizProj ? dimensions : dimensions.reverse();
 };
 
