@@ -38,8 +38,6 @@ $(document).ready(function() {
 	
 	$('#start').click(function() {
     socket.emit('join', $('#nick').val(), function() {
-      socket.emit('startMoving', 4);
-      socket.emit('fire');
       gamejs.preload([]);
 			gamejs.ready(main);
     });
