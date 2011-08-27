@@ -68,6 +68,19 @@ movement = {
       self.updatePandaPosition(panda, pandas);
     });
     _(projectiles).each(this.updateProjectilePosition);
+  },
+  
+  findPosForNewPanda: function(pandas) {
+    var maxX = params.gameWidth - params.pandaWidth
+      , maxY = params.gameHeight - params.pandaHeight
+      , tries = 0
+      , x
+      , y;
+    do {
+      x = Math.ceil(Math.random() * maxX);
+      y = Math.ceil(Math.random() * maxY);
+    } while (this.findCollidingPandas({x: x, y: y}, pandas).length > 0 && tries++ < 100);
+    return {x: x, y: y};
   }
 }
 

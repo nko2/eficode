@@ -9,10 +9,11 @@ var evt = require('events')
   , explosions = [];
 
 game.playerJoined = function(id, nick) {
+  var playerPos = movement.findPosForNewPanda(pandas);
   pandas[id] = {
     nick: nick,
-    x: params.gameWidth / 2,
-    y: params.gameHeight / 2,
+    x: playerPos.x,
+    y: playerPos.y,
     dir: params.Direction.NONE,
     moving: 0,
     health: params.pandaStartHealth
@@ -57,6 +58,7 @@ game.getState = function() {
 game.getNicks = function() {
   return _(pandas).pluck('nick');
 }
+
 
 function isInsideGameArea(el) {
   return el.x >= 0 && el.x <= params.gameWidth && el.y >= 0 && el.y <= params.gameHeight;
