@@ -1,13 +1,6 @@
-
-/**
- * Module dependencies.
- */
-
-var express = require('express');
-
-var app = module.exports = express.createServer();
-
-// Configuration
+var express = require('express')
+  , app = express.createServer()
+  , io = require('socket.io').listen(app);
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -17,21 +10,22 @@ app.configure(function(){
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
-
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
-
 app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
-// Routes
 
 app.get('/', function(req, res){
   res.render('index', {
     title: 'Express'
   });
+});
+
+io.sockets.on('connection', function(socket) {
+  socket.emit('ack', 'Hello');
 });
 
 app.listen(3000);
