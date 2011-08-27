@@ -126,9 +126,9 @@ var start = function(display, socket) {
 			}
 		});
 		
-		_(allAnimals).each(function(animals, animalId) {
-			allAnimals[animalId].update(msDuration);
-			allAnimals[animalId].draw(mainSurface);
+		_(allAnimals).each(function(animal, animalId) {
+			animal.update(msDuration);
+			animal.draw(mainSurface);
 		});
 	};
 	
