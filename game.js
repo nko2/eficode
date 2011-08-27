@@ -19,6 +19,7 @@ function updateElementPosition(el) {
 
 function updatePositions() {
   _(pandas).each(updateElementPosition);
+  _(projectiles).each(updateElementPosition);
 };
 
 game.playerJoined = function(nick) {
@@ -34,7 +35,8 @@ game.playerStoppedMoving = function(nick) {
   pandas[nick]['dir'] = Direction.NONE;
 };
 game.playerFired = function(nick) {
-  
+  var panda = pandas[nick];
+  projectiles.push({type: 'PROJECTILE', x: panda.x, y: panda.y, dir: panda.dir})
 };
 
 (function gameLoop() {
