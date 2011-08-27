@@ -54,7 +54,6 @@ function removeProjectilesOutsideGameArea() {
     }
     return res;
   }, {});
-  console.log(projectiles);
 };
 
 function getProjectileDimensions(dir) {
