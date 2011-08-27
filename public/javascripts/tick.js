@@ -5,6 +5,7 @@ var start = function(display, socket) {
 	var currentDirection = 0;
 	var allAnimals = {};
 	var projectiles = new gamejs.sprite.Group();
+	var explosions = new gamejs.sprite.Group();
 	
 	var getDirectionValue = function(key) {
 		switch (key) {
@@ -81,25 +82,33 @@ var start = function(display, socket) {
 		projectiles.add(proj);
 	};
 	
+	var handleExplosion = function(explosionState) {
+		explosions.add(new sprites.Bloodsplash([explosionState.x, explosionState.y]));
+	};
+	
 	socket.on('gameState', function(state) {
 		projectiles = new gamejs.sprite.Group();
+		explosions  = new gamejs.sprite.Group();
 		
     $('#player-list').empty();
+		var allPandasInState = {};
+		
+		_(state.pandas).each(function(panda) {
+			handlePanda(panda);
+			allPandasInState[panda.nick] = true;
+		});
+  	_(state.projs).each(function(proj) {
+  		handleProjectile(proj);
+  	});
+    _(state.expl).each(function(expl) {
+      handleExplosion(expl);
+    });  
 
-		_(state).each(function(player) {
-			switch (player.type) {
-				case 'PROJECTILE':
-					handleProjectile(player);
-					break;
-					
-				case 'PANDA':
-					handlePanda(player);
-					break;
-					
-				default:
-					break;
+		_(allAnimals).each(function(animals, nick) {
+			if (allPandasInState[nick] === undefined) {
+				delete allAnimals[nick];
 			}
-    });
+		});
   });
 
 	var grass = new gamejs.sprite.Group();
@@ -130,9 +139,12 @@ var start = function(display, socket) {
 			animal.update(msDuration);
 			animal.draw(mainSurface);
 		});
+		
+		
+		explosions.draw(mainSurface);
 	};
 	
-	gamejs.time.fpsCallback(tick, this, 26);
+	gamejs.time.fpsCallback(tick, this, 15);
 };
 
 exports.start = start;

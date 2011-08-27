@@ -14,6 +14,7 @@ var Animated = function() {
 	this.moving = false;
 	this.directionChanged = false;
 	this.dir = -1;
+	this.stateUpdated = false;
 	
 	return this;
 };
@@ -29,6 +30,7 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 	this.rect.top = y;
 	this.dir = dir;
 	this.moving = moving;
+	this.statusUpdated = true;
 };
 
 Animated.prototype.update = function(msDuration) {
@@ -38,16 +40,28 @@ Animated.prototype.update = function(msDuration) {
         this.ticksSinceLastImageChange += 1;
         if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
             var nextImage = this.currentImage + 1;
-            
+
             if (nextImage >= this.imageGroups[this.dir].length) {
                 nextImage = 0;
             }
-            
+
             this.image = this.imageGroups[this.dir][nextImage];
             this.currentImage = nextImage;
             this.ticksSinceLastImageChange = 0;
             this.directionChanged = false;
         }
+
+        if (this.statusUpdated === false && this.moving) {
+            if (this.dir == 1 || this.dir == 2) {
+                var multiplier = (this.dir == 1) ? -1 : 1;
+                this.rect.top = this.rect.top + multiplier * msDuration/1000;
+            } else {
+                var multiplier = (this.dir == 3) ? -1 : 1;
+                this.rect.left = this.rect.left + multiplier * msDuration/1000;
+            }
+        }
+
+        this.statusUpdated = false;
     }
 };
 
@@ -79,15 +93,17 @@ gamejs.utils.objects.extend(Panda, Animated);
 var Projectile = function() {
 	Projectile.superConstructor.apply(this, arguments);
 	
-	var orig1 = gamejs.image.load("images/flame_bolt_vert_1.png");
-	var orig2 = gamejs.image.load("images/flame_bolt_vert_1.png");
+	var origVertical1 = gamejs.image.load("images/flame_bolt_vert_1.png");
+	var origVertical2 = gamejs.image.load("images/flame_bolt_vert_2.png");
+	var origHorizontal1 = gamejs.image.load("images/flame_bolt_horizontal_1.png");
+	var origHorizontal2 = gamejs.image.load("images/flame_bolt_horizontal_2.png");
 	
 	this.imageGroups = [
-		/* NONE */	[orig1],
-		/* UP */    [orig1, orig2],
-		/* DOWN */  [orig1, orig2],
-		/* LEFT */  [gamejs.transform.rotate(orig1, 90), gamejs.transform.rotate(orig2, 90)],
-		/* RIGHT */ [gamejs.transform.rotate(orig1, 90), gamejs.transform.rotate(orig2, 90)]
+		/* NONE */	[origVertical1],
+		/* UP */    [origVertical1, origVertical2],
+		/* DOWN */  [origVertical1, origVertical2],
+		/* LEFT */  [origHorizontal1, origHorizontal2],
+		/* RIGHT */ [origHorizontal1, origHorizontal2]
 	];
 };
 gamejs.utils.objects.extend(Projectile, Animated);
@@ -97,6 +113,7 @@ var Bloodsplash = function(rect) {
 	this.rect = new gamejs.Rect(rect);
 	this.image = gamejs.image.load("images/blood_splash.png");
 };
+gamejs.utils.objects.extend(Bloodsplash, gamejs.sprite.Sprite);
 
 var Grass = function(rect) {
 	Grass.superConstructor.apply(this, arguments);
@@ -110,3 +127,4 @@ gamejs.utils.objects.extend(Grass, gamejs.sprite.Sprite);
 exports.Panda = Panda;
 exports.Grass = Grass;
 exports.Projectile = Projectile;
+exports.Bloodsplash = Bloodsplash;

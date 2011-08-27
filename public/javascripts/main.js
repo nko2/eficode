@@ -22,7 +22,9 @@ $(document).ready(function() {
                     "images/panda_sitting_up.png",
                     "images/panda_sitting_right.png",
                     "images/flame_bolt_vert_1.png", "images/flame_bolt_vert_2.png",
-                    "images/grass_tile.png"
+                    "images/grass_tile.png",
+                    "images/flame_bolt_horizontal_1.png", "images/flame_bolt_horizontal_2.png",
+                    "images/blood_splash.png"
             ]);
             gamejs.ready(main);
         });

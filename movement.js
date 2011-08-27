@@ -1,8 +1,5 @@
-// Epic hack pt.1
-if (typeof window === 'undefined') {
-  params = require('./params');
-  _ = require('underscore');
-}
+var params = require('./params')
+  , _ = require('underscore');
 
 movement = {
   updatePandaPosition: function(panda) {
@@ -35,21 +32,12 @@ movement = {
     }
   },
 
-  updatePositions: function(state) {
-    var self = this;
-    _(state).each(function(el) {
-      if (el.type === 'PANDA') {
-        self.updatePandaPosition(el);
-      } else if (el.type === 'PROJECTILE') {
-        self.updateProjectilePosition(el);
-      }
-    });
+  updatePositions: function(pandas, projectiles) {
+    _(pandas).each(this.updatePandaPosition);
+    _(projectiles).each(this.updateProjectilePosition);
   }
 }
 
-// Epic hack pt.2
-if (typeof window === 'undefined') {
-  module.exports = movement;
-}
+module.exports = movement;
 
 
