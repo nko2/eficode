@@ -1,4 +1,5 @@
-var express = require('express')
+var nko = require('nko')('omnfFLVFKjn9/jVm')
+  , express = require('express')
   , app = express.createServer()
   , io = require('socket.io').listen(app);
 
