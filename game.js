@@ -27,7 +27,7 @@ game.playerStartedMoving = function(id, dir) {
   panda.moving = 1;
 };
 game.playerStoppedMoving = function(id) {
-  pandas[id]['moving'] = 0;
+  pandas[id]['moving'] = false;
 };
 game.playerFired = function(id) {
   if (projectiles[id]) {
