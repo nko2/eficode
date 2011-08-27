@@ -34,7 +34,7 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 };
 
 Animated.prototype.update = function(msDuration) {
-	if (this.moving === false) {
+	if (!this.moving) {
 		this.currentImage = -1;
 	}
 	
@@ -52,7 +52,7 @@ Animated.prototype.update = function(msDuration) {
 		this.directionChanged = false;
 	}
 	
-	if (this.statusUpdated === false && this.moving === true) {
+	if (this.statusUpdated === false && this.moving) {
 		if (this.dir == 1 || this.dir == 2) {
 			var multiplier = (this.dir == 1) ? -1 : 1;
 			this.rect.top = this.rect.top + multiplier * msDuration/1000;

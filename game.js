@@ -15,7 +15,7 @@ game.playerJoined = function(id, nick) {
     x: params.gameWidth / 2,
     y: params.gameHeight / 2,
     dir: params.Direction.NONE,
-    moving: false
+    moving: 0
   };
 };
 game.playerLeft = function(id) {
@@ -24,10 +24,10 @@ game.playerLeft = function(id) {
 game.playerStartedMoving = function(id, dir) {
   var panda = pandas[id];
   panda.dir = dir;
-  panda.moving = true;
+  panda.moving = 1;
 };
 game.playerStoppedMoving = function(id) {
-  pandas[id]['moving'] = false;
+  pandas[id]['moving'] = 0;
 };
 game.playerFired = function(id) {
   if (projectiles[id]) {
