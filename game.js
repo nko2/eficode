@@ -92,7 +92,7 @@ function detectExplosions() {
     var panda = coll[0]
       , proj = coll[1]
       , userId = coll[2]
-      , shooter = proj.owner;
+      , shooter = pandas[proj.owner];
     delete projectiles[userId];
     explosions.push({x: panda.x, y: panda.y, age: 0});
     panda.health -= params.projectileDamage;
