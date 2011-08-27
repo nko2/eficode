@@ -33,22 +33,22 @@ Animated.prototype.updateState = function(x, y, dir, moving) {
 
 Animated.prototype.update = function(msDuration) {
 	if (this.moving === false) {
-		this.currentImage = -1;
-	}
-	
-	this.ticksSinceLastImageChange += 1;
-	if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
-		var nextImage = this.currentImage + 1;
-		
-		if (nextImage >= this.imageGroups[this.dir].length) {
-			nextImage = 0;
-		}
-		
-		this.image = this.imageGroups[this.dir][nextImage];
-		this.currentImage = nextImage;
-		this.ticksSinceLastImageChange = 0;
-		this.directionChanged = false;
-	}
+		this.image = this.imageGroups[0][this.dir];
+	} else {
+        this.ticksSinceLastImageChange += 1;
+        if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
+            var nextImage = this.currentImage + 1;
+            
+            if (nextImage >= this.imageGroups[this.dir].length) {
+                nextImage = 0;
+            }
+            
+            this.image = this.imageGroups[this.dir][nextImage];
+            this.currentImage = nextImage;
+            this.ticksSinceLastImageChange = 0;
+            this.directionChanged = false;
+        }
+    }
 };
 
 var Panda = function() {
@@ -60,9 +60,13 @@ var Panda = function() {
 	var origUp2 = gamejs.image.load("images/panda_up_2.png");
 	var origDown1 = gamejs.image.load("images/panda_down_1.png");
 	var origDown2 = gamejs.image.load("images/panda_down_2.png");
+	var sittingDown = gamejs.image.load("images/panda_sitting_down.png");
+	var sittingUp = gamejs.image.load("images/panda_sitting_up.png");
+	var sittingRight = gamejs.image.load("images/panda_sitting_right.png");
+	var sittingLeft = gamejs.transform.flip(sittingRight, true);
 	
 	this.imageGroups = [
-		/* NONE */	[gamejs.image.load("images/panda_sitting.png")],
+		/* NONE */	[sittingDown, sittingUp, sittingDown, sittingLeft, sittingRight],
 		/* UP */    [origUp1, origUp2, gamejs.transform.flip(origUp1, true)],
 		/* DOWN */  [origDown1, origDown2, gamejs.transform.flip(origDown1, true)],
 		/* LEFT */  [gamejs.transform.flip(origRight1, true), gamejs.transform.flip(origRight2, true)],
