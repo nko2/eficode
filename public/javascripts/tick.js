@@ -63,12 +63,13 @@ var start = function(display, socket, gameInit) {
 	var handlePanda = function(nick, x, y, dir, moving, health, score) {
 		$('#player-list').append($('<li>').text(nick + ": " + health + " - " + score));
 		
-		var panda = allAnimals[nick];	
+		var panda = allAnimals[nick];
 		if (panda === undefined) {
 			panda = allAnimals[nick] = createPanda();
 		}
 		
 		panda.updateState(x, y, dir, moving);
+		panda.setHealth(health);
 	};
 	
 	var handleProjectile = function(x, y, dir) {

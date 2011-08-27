@@ -15,6 +15,7 @@ var Animated = function() {
 	this.directionChanged = false;
 	this.dir = -1;
 	this.stateUpdated = false;
+	this.health = 0;
 	
 	return this;
 };
@@ -67,7 +68,8 @@ Animated.prototype.update = function(msDuration) {
 
 var Panda = function() {
 	Panda.superConstructor.apply(this, arguments);
-    this.dir = 0;
+  this.dir = 0;
+	this.health = 0;
 	
 	var origRight1 = gamejs.image.load("images/panda_side_1.png");
 	var origRight2 = gamejs.image.load("images/panda_side_2.png");
@@ -89,6 +91,33 @@ var Panda = function() {
 	];
 };
 gamejs.utils.objects.extend(Panda, Animated);
+
+Panda.prototype.setHealth = function(health) {
+  this.health = health;
+};
+
+Panda.prototype.draw = function(mainSurface) {
+  mainSurface.blit(this.image, this.rect);
+  
+  var healthBarWidth = Math.floor(this.health / 100 * 15);
+  console.log(healthBarWidth);
+  var srArray = new gamejs.surfacearray.SurfaceArray([healthBarWidth, 4]);
+  
+  for (var x = 0; x < healthBarWidth; x++) {
+    for (var y = 0; y < 4; y++) {
+      var color = [0, 255, 0];
+      
+      if (y == 0 || y == 3 || x == 0 || x == healthBarWidth-1) {
+        color = [0, 0, 0];
+      }
+      
+      srArray.set(x, y, color);
+    }
+  }
+  
+  mainSurface.blit(srArray.surface, new gamejs.Rect([this.rect.left, this.rect.top-5]));
+  return this;
+};
 
 
 var Projectile = function() {
