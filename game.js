@@ -1,12 +1,6 @@
 var evt = require('events')
   , _ = require('underscore')
-  , gameWidth = 600, gameHeight = 600
-  , pandaWidth = 15, pandaHeight = 15
-  , projectileWidth = 10, projectileHeight = 5
-  , explosionDuration = 2000
-  , Direction = {NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4}
-  , Speed = {PANDA: 10, PROJECTILE: 20}
-  , frameRate = 25
+  , params = require('./params')
   , game = new evt.EventEmitter()
   , pandas = {}
   , projectiles = []
@@ -16,9 +10,9 @@ game.playerJoined = function(id, nick) {
   pandas[id] = {
     type: 'PANDA',
     nick: nick,
-    x: gameWidth / 2,
-    y: gameHeight / 2,
-    dir: Direction.NONE,
+    x: params.gameWidth / 2,
+    y: params.gameHeight / 2,
+    dir: params.Direction.NONE,
     moving: false
   };
 };
@@ -41,35 +35,35 @@ game.playerFired = function(id) {
 function updatePandaPosition(panda) {
   if (!panda.moving) return;
   
-  var speed = Speed.PANDA;
+  var speed = params.Speed.PANDA;
   switch (panda.dir) {
-    case Direction.UP:
+    case params.Direction.UP:
       panda.y = Math.max(panda.y - speed, 0);
       break;
-    case Direction.DOWN:
-      panda.y = Math.min(panda.y + speed, gameHeight - pandaHeight);
+    case params.Direction.DOWN:
+      panda.y = Math.min(panda.y + speed, params.gameHeight - params.pandaHeight);
       break;
-    case Direction.LEFT:
+    case params.Direction.LEFT:
       panda.x = Math.max(panda.x - speed, 0);
       break;
-    case Direction.RIGHT:
-      panda.x = Math.min(panda.x + speed, gameWidth - pandaWidth);
+    case params.Direction.RIGHT:
+      panda.x = Math.min(panda.x + speed, params.gameWidth - params.pandaWidth);
       break;
   }
 };
 
 function updateProjectilePosition(p) {
-  var speed = Speed.PROJECTILE;
+  var speed = params.Speed.PROJECTILE;
   switch (p.dir) {
-    case Direction.UP:    p.y -= speed; break;
-    case Direction.DOWN:  p.y += speed; break;
-    case Direction.LEFT:  p.x -= speed; break;
-    case Direction.RIGHT: p.x += speed; break;
+    case params.Direction.UP:    p.y -= speed; break;
+    case params.Direction.DOWN:  p.y += speed; break;
+    case params.Direction.LEFT:  p.x -= speed; break;
+    case params.Direction.RIGHT: p.x += speed; break;
   }
 };
 
 function isInsideGameArea(el) {
-  return el.x >= 0 && el.x <= gameWidth && el.y >= 0 && el.y <= gameHeight;
+  return el.x >= 0 && el.x <= params.gameWidth && el.y >= 0 && el.y <= params.gameHeight;
 }
 
 function updatePositions() {
@@ -79,9 +73,9 @@ function updatePositions() {
 };
 
 function getProjectileDimensions(proj) {
-  var horizProj   = proj.dir === Direction.LEFT || proj.dir === Direction.RIGHT
-    , projWidth   = (horizProj ? projectileWidth : projectileHeight)
-    , projHeight  = (horizProj ? projectileHeight : projectileWidth);
+  var horizProj   = proj.dir === params.Direction.LEFT || proj.dir === params.Direction.RIGHT
+    , projWidth   = (horizProj ? params.projectileWidth : params.projectileHeight)
+    , projHeight  = (horizProj ? params.projectileHeight : params.projectileWidth);
   return [projWidth, projHeight];  
 };
 
@@ -99,7 +93,7 @@ function detectExplosions() {
       , projWidth = projectileDimensions[0]
       , projHeight = projectileDimensions[1];
     _(pandas).each(function (panda) {
-      if (isRectangleIntersection(proj.x, proj.y, projWidth, projHeight, panda.x, panda.y, pandaWidth, pandaHeight)) {
+      if (isRectangleIntersection(proj.x, proj.y, projWidth, projHeight, panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
         collisions.push([panda, proj]);
       }
     });
@@ -114,10 +108,10 @@ function detectExplosions() {
 
 function removeDistinguishedExplosions() {
   explosions = _(explosions).select(function(e) {
-    if (e.age > explosionDuration) {
+    if (e.age > params.explosionDuration) {
       return false;
     } else {
-      e.age += 1000 / frameRate;
+      e.age += 1000 / params.frameRate;
       return true;
     }
   });
@@ -131,7 +125,7 @@ function removeDistinguishedExplosions() {
   var state = _(pandas).values().concat(projectiles).concat(explosions);
   game.emit('state', state);
   
-  setTimeout(gameLoop, 1000 / frameRate);
+  setTimeout(gameLoop, 1000 / params.frameRate);
 })();
 
 
