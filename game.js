@@ -5,7 +5,7 @@ var evt = require('events')
   , movement = require('./movement')
   , game = new evt.EventEmitter()
   , pandas = {}
-  , projectiles = []
+  , projectiles = {}
   , explosions = [];
 
 game.playerJoined = function(id, nick) {
@@ -30,14 +30,20 @@ game.playerStoppedMoving = function(id) {
   pandas[id]['moving'] = false;
 };
 game.playerFired = function(id) {
+  if (projectiles[id]) {
+    return;
+  }
   var panda = pandas[id]
+    , projectileDimensions = getProjectileDimensions(panda.dir)
     , x = panda.x
     , y = panda.y;
   switch (panda.dir) {
+    case params.Direction.UP: y = panda.y - projectileDimensions[1]; break;
     case params.Direction.DOWN: y = panda.y + params.pandaHeight; break;
+    case params.Direction.LEFT: x = panda.x - projectileDimensions[0]; break;
     case params.Direction.RIGHT: x = panda.x + params.pandaWidth; break;
   }
-  projectiles.push({type: 'PROJECTILE', x: x, y: y, dir: panda.dir});
+  projectiles[id] = {type: 'PROJECTILE', x: x, y: y, dir: panda.dir};
 };
 
 function isInsideGameArea(el) {
@@ -45,7 +51,12 @@ function isInsideGameArea(el) {
 }
 
 function removeProjectilesOutsideGameArea() {
-  projectiles = _(projectiles).select(isInsideGameArea);
+  projectiles = _(projectiles).reduce(function(res, proj, id) {
+    if (isInsideGameArea(proj)) {
+      res[id] = proj;
+    }
+    return res;
+  }, {});
 };
 
 function getProjectileDimensions(dir) {
@@ -56,18 +67,19 @@ function getProjectileDimensions(dir) {
 
 function detectExplosions() {
   var collisions = [];
-  _(projectiles).each(function(proj) {
+  _(projectiles).each(function(proj, userId) {
     var projDim = getProjectileDimensions(proj.dir);
     _(pandas).each(function (panda) {
       if (geom.isRectangleIntersection(proj.x, proj.y, projDim[0], projDim[1], panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
-        collisions.push([panda, proj]);
+        collisions.push([panda, proj, userId]);
       }
     });
   });
   _(collisions).each(function(coll) {
     var panda = coll[0]
       , proj = coll[1]
-    projectiles = _(projectiles).without(proj);
+      , userId = coll[2];
+    delete projectiles[userId];
     explosions.push({type: 'EXPLOSION', x: panda.x, y: panda.y, age: 0});
   });
 };
@@ -84,7 +96,7 @@ function removeDistinguishedExplosions() {
 }
 
 (function gameLoop() {
-  var pandasAndProjectiles = _(pandas).values().concat(projectiles);
+  var pandasAndProjectiles = _(pandas).values().concat(_(projectiles).values());
   
   movement.updatePositions(pandasAndProjectiles);
   detectExplosions();
