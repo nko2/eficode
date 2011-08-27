@@ -4,6 +4,7 @@ var gamejs = require('gamejs'),
 var start = function(display, socket) {
 	var currentDirection = 0;
 	var allAnimals = {};
+	var projectiles = new gamejs.sprite.Group();
 	
 	var getDirectionValue = function(key) {
 		switch (key) {
@@ -29,21 +30,26 @@ var start = function(display, socket) {
 	};
 	
 	var handleKeyDown = function(key) {
-		var direction = getDirectionValue(key);
+		if (key == gamejs.event.K_SPACE) {
+			socket.emit('fire', function() {
+				// do nothing
+			});	
+		} else {
+			var direction = getDirectionValue(key);
 		
-		if (direction !== -1 && currentDirection !== direction) {
-			currentDirection = direction;
+			if (direction !== -1 && currentDirection !== direction) {
+				currentDirection = direction;
 			
-			socket.emit('startMoving', direction, function() {
-			
-			});
+				socket.emit('startMoving', direction, function() {
+					// do nothing
+				});
+			}
 		}
 	};
 	
 	var handleKeyUp = function(key) {
 		if (getDirectionValue(key) === currentDirection) {
 			socket.emit('stopMoving', function() {
-				console.log("stopped moving");
 				currentDirection = -1;
 			});
 		}
@@ -51,23 +57,48 @@ var start = function(display, socket) {
 	
 	var createAnimal = function(player) {
 		if (player.type == "PANDA") {
-			return new sprites.Panda([player.x, player.y]);
+			return new sprites.Panda();
 		} else {
 			return null;
 		}
 	};
 	
+	var handlePanda = function(pandaState) {
+		$('#player-list').append($('<li>').text(pandaState.nick));
+		
+		var panda = allAnimals[pandaState.nick];	
+		if (panda === undefined) {
+			panda = allAnimals[pandaState.nick] = createAnimal(pandaState);
+		}
+		
+		panda.updateState(pandaState.x, pandaState.y, pandaState.dir, pandaState.moving);
+	};
+	
+	var handleProjectile = function(projectileState) {
+		var proj = new sprites.Projectile();
+		proj.updateState(projectileState.x, projectileState.y, projectileState.dir, projectileState.moving);
+		
+		projectiles.add(proj);
+	};
+	
 	socket.on('gameState', function(state) {
+		projectiles = new gamejs.sprite.Group();
+		
     $('#player-list').empty();
 
 		_(state).each(function(player) {
-      $('#player-list').append($('<li>').text(player.nick));
-
-			if (allAnimals[player.nick] === undefined) {
-				allAnimals[player.nick] = createAnimal(player);
+			switch (player.type) {
+				case 'PROJECTILE':
+					handleProjectile(player);
+					break;
+					
+				case 'PANDA':
+					handlePanda(player);
+					break;
+					
+				default:
+					break;
 			}
-			
-			allAnimals[player.nick].move(player.x, player.y, player.dir);
     });
   });
 
@@ -84,6 +115,8 @@ var start = function(display, socket) {
 		mainSurface.fill("#FFFFFF");
 		
 		grass.draw(mainSurface);
+		projectiles.update(msDuration);
+		projectiles.draw(mainSurface);
 		
 		gamejs.event.get().forEach(function(e) {
 			if (e.type == gamejs.event.KEY_DOWN) {
@@ -94,6 +127,7 @@ var start = function(display, socket) {
 		});
 		
 		_(allAnimals).each(function(animals, animalId) {
+			allAnimals[animalId].update(msDuration);
 			allAnimals[animalId].draw(mainSurface);
 		});
 	};

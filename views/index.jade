@@ -1,8 +1,13 @@
 #login
   h1 Sad Pandas
-  span Your name, plz
-  input#nick(type='text')
-  input#start(type='button', value='Start')
+  form(onsubmit="return false;")
+    label
+      | Your name, plz:
+      input#nick(type='text', name='user[name]')
+    br
+    label
+      | If you feel lucky:
+      input#start(type='button', value='Start')
 
 #main(style='display: none;')
   #sidebar
@@ -10,5 +15,3 @@
     h2 Players
     ul#player-list
   canvas#gjs-canvas
-
-  
