@@ -1,5 +1,6 @@
-var gamejs = require('gamejs'),
-	sprites = require('sprites');
+var gamejs = require('gamejs')
+  , sprites = require('sprites')
+	, utils = require('utils');
 
 var start = function(display, socket, gameInit) {
 	var currentDirection = 0;
@@ -7,36 +8,13 @@ var start = function(display, socket, gameInit) {
 	var projectiles = new gamejs.sprite.Group();
 	var explosions = new gamejs.sprite.Group();
 	
-	var getDirectionValue = function(key) {
-		switch (key) {
-			case gamejs.event.K_UP:
-				return 1;
-				break;
-				
-			case gamejs.event.K_DOWN:
-				return 2;
-				break;
-				
-			case gamejs.event.K_LEFT:
-				return 3;
-				break;
-				
-			case gamejs.event.K_RIGHT:
-				return 4;
-				break;
-				
-			default:
-				return -1;
-		}
-	};
-	
 	var handleKeyDown = function(key) {
 		if (key == gamejs.event.K_SPACE) {
 			socket.emit('fire', function() {
 				// do nothing
 			});	
 		} else {
-			var direction = getDirectionValue(key);
+			var direction = utils.keyToDirection(key);
 		
 			if (direction !== -1 && currentDirection !== direction) {
 			  if (currentDirection !== -1) {
@@ -55,7 +33,7 @@ var start = function(display, socket, gameInit) {
 	};
 	
 	var handleKeyUp = function(key) {
-		if (getDirectionValue(key) === currentDirection) {
+		if (utils.keyToDirection(key) === currentDirection) {
 			socket.emit('stopMoving', function() {
 				currentDirection = -1;
 			});
