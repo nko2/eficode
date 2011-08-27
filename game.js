@@ -47,6 +47,9 @@ game.playerFired = function(id) {
 game.getState = function() {
   return {pandas: _(pandas).values(), projectiles: _(projectiles).values(), expl: explosions};
 };
+game.getNicks = function() {
+  return _(pandas).pluck('nick');
+}
 
 function isInsideGameArea(el) {
   return el.x >= 0 && el.x <= params.gameWidth && el.y >= 0 && el.y <= params.gameHeight;

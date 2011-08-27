@@ -13,7 +13,8 @@ $(document).ready(function() {
 	};
 
     function start() {
-        socket.emit('join', $('#nick').val(), function(gameInit) {
+        socket.emit('join', $('#nick').val(), function(response) {
+          if (response.status) {
             gamejs.preload(
                 ["images/panda_side_1.png", "images/panda_side_2.png",
                  "images/panda_down_1.png", "images/panda_down_2.png",
@@ -25,8 +26,11 @@ $(document).ready(function() {
 								 "images/blood_splash.png"
             ]);
             gamejs.ready(function() {
-              main(gameInit);
+              main(response.gameState);
             });
+          } else {
+            $("#login-fail").show();
+          }
         });
     };
 
