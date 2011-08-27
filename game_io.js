@@ -28,7 +28,7 @@ module.exports = function(io) {
 
   // Server -> Client
   game.on('state', function(state) {
-    io.sockets.emit('gameState', state);
+    io.sockets.volatile.emit('gameState', state);
   });
   
 };

@@ -14,7 +14,7 @@ $(document).ready(function() {
 	
 	$('#start').click(function() {
     socket.emit('join', $('#nick').val(), function() {
-      gamejs.preload(["images/panda_sitting.png", "images/panda_up.png", "images/panda_down.png", "images/panda_left.png", "images/panda_right.png"]);
+      gamejs.preload(["images/panda_sitting.png", "images/panda_up.png", "images/panda_down.png", "images/panda_left.png", "images/panda_right.png", "images/grass_tile.png"]);
 			gamejs.ready(main);
     });
   });

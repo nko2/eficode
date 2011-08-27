@@ -2,7 +2,6 @@ var gamejs = require('gamejs');
 
 var Animal = function(rect) {
 	Animal.superConstructor.apply(this, arguments);
-	this.speed = 0;
 	this.rect = new gamejs.Rect(rect);
 	this.image = null;
 	this.images = [];
@@ -31,4 +30,15 @@ var Panda = function(rect) {
 };
 gamejs.utils.objects.extend(Panda, Animal);
 
+
+var Grass = function(rect) {
+	Grass.superConstructor.apply(this, arguments);
+	this.rect = new gamejs.Rect(rect);
+	this.image = gamejs.image.load("images/grass_tile.png");
+	
+	return this;
+};
+gamejs.utils.objects.extend(Grass, gamejs.sprite.Sprite);
+
 exports.Panda = Panda;
+exports.Grass = Grass;
