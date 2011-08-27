@@ -91,10 +91,17 @@ function detectExplosions() {
   _(collisions).each(function(coll) {
     var panda = coll[0]
       , proj = coll[1]
-      , userId = coll[2];
+      , userId = coll[2]
+      , shooter = proj.owner;
     delete projectiles[userId];
     explosions.push({x: panda.x, y: panda.y, age: 0});
-    panda.health -= 1;
+    panda.health -= params.projectileDamage;
+    if (panda.health <= 0) {
+        shooter.score += params.projectileKillScore;
+        panda.x = 1;
+        panda.y = 1;
+        panda.moving = 0;
+    }
   });
 };
 
