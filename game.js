@@ -189,6 +189,9 @@ function applyRemovedElements() {
     delete pandas[id];
   });
   removedPandas = [];
+  _(collidedProjectiles).each(function(id) {
+    delete projectiles[id];
+  })
   collidedProjectiles = [];
   
   return removedElements;
