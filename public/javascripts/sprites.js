@@ -117,26 +117,29 @@ Panda.prototype.update = function(msDuration) {
 
 Panda.prototype.draw = function(mainSurface) {
   mainSurface.blit(this.image, this.rect);
-  /*
-  var hbWidth  = Math.floor(this.get('health') / 100 * 15);
-  var hbHeight = 4;
   
-  var srArray = new gamejs.surfacearray.SurfaceArray([hbWidth, hbHeight]);
+  if (this.get('alive')) {
+    var hbWidth  = Math.floor(this.get('health') / 100 * 15);
+    var hbHeight = 4;
   
-  for (var x = 0; x < hbWidth; x++) {
-    for (var y = 0; y < hbHeight; y++) {
-      var color = [0, 255, 0];
+    var srArray = new gamejs.surfacearray.SurfaceArray([hbWidth, hbHeight]);
+  
+    for (var x = 0; x < hbWidth; x++) {
+      for (var y = 0; y < hbHeight; y++) {
+        var color = [0, 255, 0];
       
-      if (y == 0 || y == hbHeight-1 || x == 0 || x == hbWidth-1) {
-        color = [0, 0, 0];
+        if (y == 0 || y == hbHeight-1 || x == 0 || x == hbWidth-1) {
+          color = [0, 0, 0];
+        }
+      
+        srArray.set(x, y, color);
       }
-      
-      srArray.set(x, y, color);
     }
+  
+    mainSurface.blit(srArray.surface, new gamejs.Rect([this.rect.left, this.rect.top-5]));
   }
   
-  mainSurface.blit(srArray.surface, new gamejs.Rect([this.rect.left, this.rect.top-5]));
-  return this;*/
+  return this;
 };
 
 
