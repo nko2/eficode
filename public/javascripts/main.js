@@ -15,19 +15,19 @@ $(document).ready(function() {
     });
 	};
 
-	var main = function(gameInit) {
+	var main = function() {
 		$("#login").remove();
 		$("#main").show();
 		
 		display = gamejs.display.setMode([window.params.gameWidth, window.params.gameHeight]);    
 		scaleToFitWindow();
 		
-		tick.start(display, socket, gameInit);
+		tick.start(display, socket);
 	};
 
   function start() {
-      socket.emit('join', $('#nick').val(), function(response) {
-        if (response.status) {
+      socket.emit('join', $('#nick').val(), function(ok) {
+        if (ok) {
           gamejs.preload(
               ["images/panda_side_1.png", "images/panda_side_2.png",
                "images/panda_down_1.png", "images/panda_down_2.png",
@@ -41,9 +41,7 @@ $(document).ready(function() {
                "images/blood_splash.png"
               ]);
           
-          gamejs.ready(function() {
-            main(response.gameState);
-          });
+          gamejs.ready(main);
         } else {
           $("#login-fail").show();
         }

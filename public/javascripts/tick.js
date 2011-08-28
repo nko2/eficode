@@ -1,144 +1,65 @@
 var gamejs = require('gamejs')
   , sprites = require('sprites')
-	, utils = require('utils');
+	, utils = require('utils')
+	, Game = require('game').Game
+	, params = window.params;
 
-var start = function(display, socket, gameInit) {
-	var currentDirection = 0;
-	var allAnimals = {};
-	var projectiles = new gamejs.sprite.Group();
-	var explosions = new gamejs.sprite.Group();
+var start = function(display, socket) {
+  socket.on('gameStateDelta', function(state) {
+	  game.updateState(state);
+	});
 	
-	var handleKeyDown = function(key) {
+	var game = new Game(params.gameWidth, params.gameHeight, socket);
+  socket.emit('startGame', function(gameInit) {
+  	game.updateState(gameInit);
+  });
+	
+	var onKeyDown = function(key) {
 		if (key == gamejs.event.K_SPACE) {
-			socket.emit('fire', function() {
-				// do nothing
-			});	
+			game.fire();
 		} else {
 			var direction = utils.keyToDirection(key);
-		
-			if (direction !== -1 && currentDirection !== direction) {
-			  if (currentDirection !== -1) {
-			    socket.emit('stopMoving', function() {
-			      
-			    });
-			  }
-			  
-				currentDirection = direction;
-			
-				socket.emit('startMoving', direction, function() {
-					// do nothing
-				});
-			}
+		  game.changeDirection(direction);
 		}
 	};
 	
-	var handleKeyUp = function(key) {
-		if (utils.keyToDirection(key) === currentDirection) {
-			socket.emit('stopMoving', function() {
-				currentDirection = -1;
-			});
+	var onKeyUp = function(key) {
+		if (utils.keyToDirection(key) === game.currentDirection) {
+			game.stopMoving();
 		}
 	};
 	
-	var createPanda = function() {
-		return new sprites.Panda();
-	};
-	
-	var handlePanda = function(nick, x, y, dir, moving, health, score) {
-		$('#player-list').append($('<li>').text(nick + ": " + health + " - " + score));
-		
-		var panda = allAnimals[nick];
-		if (panda === undefined) {
-			panda = allAnimals[nick] = createPanda();
-		}
-		
-		panda.updateState(x, y, dir, moving);
-		panda.setHealth(health);
-	};
-	
-	var handleProjectile = function(x, y, dir) {
-		var proj = new sprites.Projectile();
-		proj.updateState(x, y, dir, true);
-		projectiles.add(proj);
-	};
-	
-	var handleExplosion = function(x, y) {
-		explosions.add(new sprites.Bloodsplash([x, y]));
-	};
-	
-	var handleGameState = function(state) {
-		projectiles = new gamejs.sprite.Group();
-		explosions  = new gamejs.sprite.Group();
-		
-    $('#player-list').empty();
-		var allPandasInState = {};
-		
-		_(state.pa).each(function(panda) {
-			handlePanda.apply(null, panda);
-			allPandasInState[panda[0]] = true;
-		});
-  	_(state.pr).each(function(proj) {
-  		handleProjectile.apply(null, proj);
-  	});
-    _(state.e).each(function(expl) {
-      handleExplosion.apply(null, expl);
-    });
-
-		_(allAnimals).each(function(animals, nick) {
-			if (allPandasInState[nick] === undefined) {
-				delete allAnimals[nick];
-			}
-		});	  
-	};
-	
-	socket.on('gameState', handleGameState);
-
-	var grass = new gamejs.sprite.Group();
-	var i, j;
-	for (i = 0; i < 600; i += 15) {
-		for (j = 0; j < 600; j += 15) {
-			grass.add(new sprites.Grass([i, j]));
-		}
-	}
-	
-	var tick = function(msDuration) {
-		var mainSurface = gamejs.display.getSurface();
-		mainSurface.fill("#FFFFFF");
-		
-		grass.draw(mainSurface);
-		projectiles.update(msDuration);
-		projectiles.draw(mainSurface);
-		
-		var eventsByType = {};
-		eventsByType[gamejs.event.KEY_DOWN] = [];
-		eventsByType[gamejs.event.KEY_UP] = [];
+	var processEvents = function() {
+	  var byType = {};
+		byType[gamejs.event.KEY_DOWN] = [];
+		byType[gamejs.event.KEY_UP] = [];
 		
 		gamejs.event.get().forEach(function(e) {
 			if (e.type == gamejs.event.KEY_DOWN || e.type == gamejs.event.KEY_UP) {
-				eventsByType[e.type].push(e);
+				byType[e.type].push(e);
 			}
 		});
 		
-		if (eventsByType[gamejs.event.KEY_UP].length > 0) {
-		  var e = eventsByType[gamejs.event.KEY_UP][0];
-		  handleKeyUp(e.key);
+		if (byType[gamejs.event.KEY_UP].length > 0) {
+		  var e = byType[gamejs.event.KEY_UP][0];
+		  onKeyUp(e.key);
 		}
 		
-		if (eventsByType[gamejs.event.KEY_DOWN].length > 0) {
-		  _(eventsByType[gamejs.event.KEY_DOWN]).each(function(e) {
-		    handleKeyDown(e.key);
+		if (byType[gamejs.event.KEY_DOWN].length > 0) {
+		  _(byType[gamejs.event.KEY_DOWN]).each(function(e) {
+		    onKeyDown(e.key);
 		  });
 		}
-		
-		_(allAnimals).each(function(animal, animalId) {
-			animal.update(msDuration);
-			animal.draw(mainSurface);
-		});
-		
-		
-		explosions.draw(mainSurface);
 	};
-	handleGameState(gameInit);
+	
+	var tick = function(msDuration) {
+	  processEvents();
+	  
+	  var mainSurface = gamejs.display.getSurface();
+		game.update(msDuration);
+		game.draw(mainSurface);
+	};
+	
 	gamejs.time.fpsCallback(tick, this, 25);
 };
 
