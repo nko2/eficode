@@ -1,6 +1,6 @@
 var evt = require('events')
   , _ = require('underscore')
-  , params = require('./params')
+  , params = require('./public/javascripts/params')
   , geom = require('./geometry')
   , movement = require('./movement')
   , game = new evt.EventEmitter()

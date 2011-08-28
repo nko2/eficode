@@ -1,4 +1,4 @@
-var params = require('./params')
+var params = require('./public/javascripts/params')
   , geometry = require('./geometry')
   , _ = require('underscore');
 
