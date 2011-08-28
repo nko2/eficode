@@ -56,13 +56,7 @@ Game.prototype.draw = function(mainSurface) {
   // Draw in correct order
   _(["PROJECTILE", "PANDA", "EXPLOSION", "PALM"]).each(function(type) {
     _(byType[type]).each(function(el) {
-      try {
       el.draw(mainSurface);
-      } catch (e) {
-        self.socket.send(e);
-        self.socket.send(el.getType());
-        self.socket.send(el.image);
-      }
     });
   });
 
