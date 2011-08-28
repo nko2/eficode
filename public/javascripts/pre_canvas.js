@@ -8,8 +8,8 @@ var drawImage = function(img, coordinates, surface, rect) {
   if (surface === undefined) {
     surface = new gamejs.Surface(params.gameWidth, params.gameHeight);
   }
+  var size = img.getSize();
   if (rect === undefined) {
-      var size = img.getSize();
       rect = new gamejs.Rect([0,0],img.getSize());
   }
   
