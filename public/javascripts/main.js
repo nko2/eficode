@@ -25,6 +25,7 @@ $(document).ready(function() {
 		scaleToFitWindow();
 		
 		tick.start(display, socket);
+		ipad.start(socket);
 	};
 
   function start() {

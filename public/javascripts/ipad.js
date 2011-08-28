@@ -1,17 +1,28 @@
 var isPad = navigator.userAgent.match(/iPad/i) != null;
 
-if (isPad) {
+//if (isPad) {
   
-  var moveControls = $('<div>');
-  $(moveControls.css({
-    position: 'fixed',
-    left: '20px',
-    bottom: '20px',
-    width: '200px',
-    height: '200px',
-    backgroundColor: 'black'
-  }));
-  $(document.body).append(moveControls);
-  
-}
+  var start = function(socket) {
+    var moveControls = $('<div>');
+     $(moveControls.css({
+       position: 'fixed',
+       left: '20px',
+       bottom: '20px',
+       width: '200px',
+       height: '200px',
+       backgroundColor: 'black'
+     }));
+     
+     moveControls.bind('touchstart', function(evt) {
+       socket.send('touch start');
+       socket.send(evt);
+     });
+     
+     $(document.body).append(moveControls);
+  };
+ 
 
+  
+//}
+
+exports.start = start;
