@@ -91,7 +91,7 @@ var Panda = function() {
 	var sittingUp = gamejs.image.load("images/panda_sitting_up.png");
 	var sittingRight = gamejs.image.load("images/panda_sitting_right.png");
 	var sittingLeft = gamejs.transform.flip(sittingRight, true);
-  this.deadImage = gamejs.image.load("images/panda_sitting_right.png");
+  this.deadImage = gamejs.image.load("images/dead_panda.png");
 	
 	this.imageGroups = [
 		/* NONE */	[sittingDown, sittingUp, sittingDown, sittingLeft, sittingRight],
@@ -117,7 +117,7 @@ Panda.prototype.update = function(msDuration) {
 
 Panda.prototype.draw = function(mainSurface) {
   mainSurface.blit(this.image, this.rect);
-  
+  /*
   var hbWidth  = Math.floor(this.get('health') / 100 * 15);
   var hbHeight = 4;
   
@@ -136,7 +136,7 @@ Panda.prototype.draw = function(mainSurface) {
   }
   
   mainSurface.blit(srArray.surface, new gamejs.Rect([this.rect.left, this.rect.top-5]));
-  return this;
+  return this;*/
 };
 
 
