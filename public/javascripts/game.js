@@ -105,12 +105,6 @@ Game.prototype.updateState = function(state) {
     });
   };
   
-  if (state.removedElements !== undefined) {
-    _(state.removedElements).each(function(id) {
-      delete that.elements[id];
-    });
-  }
-  
   if (state.newElements !== undefined) {
     _(state.newElements).each(function(elements, type) {
       _(elements).each(function(elData, id) {
@@ -128,6 +122,13 @@ Game.prototype.updateState = function(state) {
       updateElement(el, deltaUpdates);
     });
   }
+  
+  if (state.removedElements !== undefined) {
+    _(state.removedElements).each(function(id) {
+      delete that.elements[id];
+    });
+  }
+  
 };
 
 exports.Game = Game;
