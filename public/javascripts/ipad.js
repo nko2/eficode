@@ -61,7 +61,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      moveCanvas.addEventListener('touchstart', function(evt) {
        var touch = evt.targetTouches[0]
           , x = touch.clientX
-          , y = touch.clientY,
+          , y = touch.clientY
           , dir = getDirection(x, y);
        if (dir) {
          game.changeDirection(dir);
