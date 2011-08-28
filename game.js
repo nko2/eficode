@@ -41,12 +41,12 @@ game.playerStoppedMoving = function(id) {
   pandaMovementCommands.push({id: id, moving: 0});
 };
 game.playerFired = function(id) {
-  if (playerHasRecentlyFired(id)) return;
-  
   var panda = pandas[id]
     , projectileDimensions = getProjectileDimensions(panda.dir)
     , x = panda.x
     , y = panda.y;
+    
+  if (panda.alive !== 1 || playerHasRecentlyFired(id)) return;
     
   switch (panda.dir) {
     case params.Direction.UP:
@@ -141,11 +141,13 @@ function applyProjectileCollisions() {
   _(projectiles).each(function(proj, id) {
     var projDim = getProjectileDimensions(proj.dir);
     _(pandas).each(function (panda, pandaId) {
-      if (geom.rectsIntersect(proj.x,  proj.y,  projDim.width,     projDim.height,
-                              panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
-        collidedProjectiles.push(id);                            
-        newExplosions[uid()] = {x: panda.x, y: panda.y, age: 0};
-        poorPandaWasShot(pandaId, panda, proj.owner, pandas[proj.owner]);
+      if (panda.alive === 1) {
+        if (geom.rectsIntersect(proj.x,  proj.y,  projDim.width,     projDim.height,
+                                panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
+          collidedProjectiles.push(id);                            
+          newExplosions[uid()] = {x: panda.x, y: panda.y, age: 0};
+          poorPandaWasShot(pandaId, panda, proj.owner, pandas[proj.owner]);
+        }
       }
     });
   });
