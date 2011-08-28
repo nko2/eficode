@@ -46,17 +46,17 @@ Game.prototype.changeDirection = function(direction) {
     }
     
     this.currentDirection = direction;
-    this.socket.emit('startMoving', direction, function() { });
+    this.socket.emit('startMoving', direction);
   }
 };
 
 Game.prototype.stopMoving = function() {
-  this.socket.emit('stopMoving', function() { });
+  this.socket.emit('stopMoving');
   this.currentDirection = params.Direction.NONE;
 };
 
 Game.prototype.fire = function() {
-  this.socket.emit('fire', function() { });
+  this.socket.emit('fire');
 };
 
 Game.prototype.draw = function(mainSurface) {
