@@ -5,6 +5,13 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
   var start = function(socket) {
     
     $('<meta name="viewport" content="width=device-width,maximum-scale=1.0" />').appendTo($('head'));
+    $('.container_10').css({
+      width: '1024px'
+    });
+    $('#header, #instructions').hide();
+    $('.grid_2').css({
+      width: '150px'
+    });
     
     var moveControls = $('<div>');
      $(moveControls.css({
