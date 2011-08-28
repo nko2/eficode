@@ -118,7 +118,7 @@ Panda.prototype.update = function(msDuration) {
 Panda.prototype.draw = function(mainSurface) {
   mainSurface.blit(this.image, this.rect);
   
-  if (this.get('alive')) {
+  if (this.get('alive') && this.get('health') >= 0) {
     var hbWidth  = Math.floor(this.get('health') / 100 * 15);
     var hbHeight = 4;
   
