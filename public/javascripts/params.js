@@ -6,6 +6,7 @@ params = {
   pandaStartHealth: 100,
   projectileWidth: 15,
   projectileHeight: 5,
+  projectileFireDelay: 1200,
   projectileDamage: 35,
   projectileKillScore: 1,
   explosionDuration: 1000,

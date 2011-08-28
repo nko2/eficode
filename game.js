@@ -86,7 +86,7 @@ game.getNicks = function() {
 // Internal stuff
 
 function playerHasRecentlyFired(playerId) {
-  var recent = new Date().getTime() - 1800;
+  var recent = new Date().getTime() - params.projectileFireDelay;
   return _(projectiles).detect(function(proj) {
     return proj.owner === playerId && proj.firedAt > recent;
   });
