@@ -18,6 +18,12 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
       paddingRight: '0'
     });
     
+    addMoveControls(game);
+    addFireControls(game);
+  };
+  
+  var addMoveControls = function(game) {
+    
     var moveControls = $('<canvas>');
      $(moveControls.css({
        position: 'fixed',
@@ -34,13 +40,8 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      var ctx = moveCanvas.getContext('2d');
      
      ctx.strokeStyle = '#000';
-     ctx.fillStyle = '#ccc';
-     
-     var upGrad = ctx.createLinearGradient(100, 100, 100, 0);
-     upGrad.addColorStop(0, '#ccc');
-     upGrad.addColorStop(1, '#999');
-     ctx.fillStyle = upGrad;
-     
+
+     ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 100, 0);
      ctx.beginPath();
      ctx.moveTo(0, 0);
      ctx.lineTo(200, 0);
@@ -48,11 +49,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
-     var downGrad = ctx.createLinearGradient(100, 100, 100, 200);
-     downGrad.addColorStop(0, '#ccc');
-     downGrad.addColorStop(1, '#999');
-     ctx.fillStyle = downGrad;
-     
+     ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 100, 200);
      ctx.beginPath();
      ctx.moveTo(0, 200);
      ctx.lineTo(200, 200);
@@ -60,25 +57,15 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
-     
-     var leftGrad = ctx.createLinearGradient(100, 100, 0, 100);
-     leftGrad.addColorStop(0, '#ccc');
-     leftGrad.addColorStop(1, '#999');
-     ctx.fillStyle = leftGrad;
-     
+     ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 0, 100);
      ctx.beginPath();
      ctx.moveTo(0, 0);
      ctx.lineTo(100, 100);
      ctx.lineTo(0, 200);
      ctx.closePath();
      ctx.fill();
-     
-     
-     var rightGrad = ctx.createLinearGradient(100, 100, 200, 100);
-     rightGrad.addColorStop(0, '#ccc');
-     rightGrad.addColorStop(1, '#999');
-     ctx.fillStyle = rightGrad;
-     
+ 
+     ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 200, 100);
      ctx.beginPath();
      ctx.moveTo(200, 0);
      ctx.lineTo(200, 200);
@@ -87,6 +74,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.fill();
      
      ctx.fillStyle = 'black';
+     
      ctx.beginPath();
      ctx.moveTo(80, 40);
      ctx.lineTo(120, 40);
@@ -94,7 +82,6 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
-     ctx.fillStyle = 'black';
      ctx.beginPath();
      ctx.moveTo(80, 160);
      ctx.lineTo(120, 160);
@@ -102,7 +89,6 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
-     ctx.fillStyle = 'black';
      ctx.beginPath();
      ctx.moveTo(40, 80);
      ctx.lineTo(40, 120);
@@ -110,7 +96,6 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
-     ctx.fillStyle = 'black';
      ctx.beginPath();
      ctx.moveTo(160, 80);
      ctx.lineTo(160, 120);
@@ -120,21 +105,14 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      
      $(document.body).append(moveControls);
      
-     var upTriangle = [[[0,   0],   [200, 0]],   [[200, 0],   [100, 100]], [[100, 100], [0, 0]]];
+     var upTriangle =     [[[0,   0],   [200, 0]],   [[200, 0],   [100, 100]], [[100, 100], [0, 0]]];
      var downTriangle =   [[[0,   200], [200, 200]], [[200, 200], [100, 100]], [[100, 100], [0, 200]]];
      var leftTriangle =   [[[0,   0],   [100, 100]], [[100, 100], [0,   200]], [[0,   200], [0, 0]]];
      var rightTriangle =  [[[200, 0],   [200, 200]], [[200, 200], [100, 100]], [[100, 100], [200, 0]]];
      
-     var getControlX = function(x) {
-       return x - $(moveControls).offset().left;
-     };
-     var getControlY = function(y) {
-       return y - $(moveControls).offset().top;
-     };
-     
      var getDirection = function(x, y) {
-       var controlX = getControlX(x)
-         , controlY = getControlY(y)
+       var controlX = x - $(moveControls).offset().left
+         , controlY = y - $(moveControls).offset().top
          , controlPoint = [controlX, controlY];
        if (geometry.pointWithinPolygon(controlPoint, upTriangle)) {
          return params.Direction.UP;
@@ -149,9 +127,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      
      moveCanvas.addEventListener('touchstart', function(evt) {
        var touch = evt.targetTouches[0]
-          , x = touch.clientX
-          , y = touch.clientY
-          , dir = getDirection(x, y);
+          , dir = getDirection(touch.clientX, touch.clientY);
        if (dir) {
          game.changeDirection(dir);
        }
@@ -160,9 +136,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      });
      moveCanvas.addEventListener('touchmove', function(evt) {
        var touch = evt.targetTouches[0]
-          , x = touch.clientX
-          , y = touch.clientY
-          , dir = getDirection(x, y);
+          , dir = getDirection(touch.clientX, touch.clientY);
        if (dir) {
         game.changeDirection(dir);
        }
@@ -173,45 +147,53 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        game.stopMoving();
        return false;
      });
-     
-     
-     
-     var fireControls = $('<canvas>');
-      $(fireControls.css({
-        position: 'fixed',
-        right: '20px',
-        bottom: '20px',
-        width: '200px',
-        height: '200px'
-      }));
-      var fireCanvas = fireControls[0];
-      var ctx = fireCanvas.getContext('2d');
-      fireCanvas.width = 200;
-      fireCanvas.height= 200;
-      var fCtx = fireCanvas.getContext('2d');
+  }
+  
+  var makeLinearGradient = function(ctx, x1, y1, x2, y2) {
+    var grad = ctx.createLinearGradient(x1, y1, x2, y2);
+    grad.addColorStop(0, '#ddd');
+    grad.addColorStop(1, '#bbb');
+    return grad;
+  }
+  
+  var addFireControls = function(game) {
+    
+    var fireControls = $('<canvas>');
+     $(fireControls.css({
+       position: 'fixed',
+       right: '20px',
+       bottom: '20px',
+       width: '200px',
+       height: '200px'
+     }));
+     var fireCanvas = fireControls[0];
+     var ctx = fireCanvas.getContext('2d');
+     fireCanvas.width = 200;
+     fireCanvas.height= 200;
+     var fCtx = fireCanvas.getContext('2d');
 
-      fCtx.strokeStyle = '#000';
-      fCtx.fillStyle = '#ccc';
+     fCtx.strokeStyle = '#000';
+     fCtx.fillStyle = '#ccc';
 
-      var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
-      fireGrad.addColorStop(0, '#ccc');
-      fireGrad.addColorStop(1, '#999');
-      fCtx.fillStyle = fireGrad;
-      
-      fCtx.fillRect(0, 0, 200, 200);
-      
-      fCtx.font = "bold 30px sans-serif";
-      fCtx.fillStyle = 'black';
-      fCtx.fillText("Fire", 75, 110);
-      
-      $(document.body).append(fireControls);
-          
-      fireCanvas.addEventListener('touchstart', function(evt) {
-        game.fire();
-        evt.preventDefault();
-        return false;
-      });
-  };
+     var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
+     fireGrad.addColorStop(0, '#ddd');
+     fireGrad.addColorStop(1, '#bbb');
+     fCtx.fillStyle = fireGrad;
+     
+     fCtx.fillRect(0, 0, 200, 200);
+     
+     fCtx.font = "bold 30px sans-serif";
+     fCtx.fillStyle = 'black';
+     fCtx.fillText("Fire", 75, 110);
+     
+     $(document.body).append(fireControls);
+         
+     fireCanvas.addEventListener('touchstart', function(evt) {
+       game.fire();
+       evt.preventDefault();
+       return false;
+     });
+  }
  
 
   
