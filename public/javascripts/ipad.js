@@ -2,14 +2,14 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
 
   
 var start = function(game, socket) {
-  if (isPad) {
+  //if (isPad) {
     
-    $('.container_10').css({
+    $(document.body).css({
       width: '960px',
       height: '680px',
       minWidth: '960px'
     });
-    $('#header, #instructions').hide();
+    $('#instructions').hide();
     $('.grid_2').css({
       width: '150px'
     });
@@ -20,7 +20,7 @@ var start = function(game, socket) {
   
     addMoveControls(game);
     addFireControls(game);
-  }
+  //}
 };
 
 var addMoveControls = function(game) {
