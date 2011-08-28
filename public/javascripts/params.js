@@ -10,11 +10,11 @@ params = {
   projectileKillScore: 1,
   explosionDuration: 1000,
   respawnTicks: 50,
-  Direction: {NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4},
-  Speed: {PANDA: 6, PROJECTILE: 12},
+  explosionDuration: 2000,
+  Direction: { NONE: 0, UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4 },
+  Speed: { PANDA: 6, PROJECTILE: 12 },
   frameRate: 10
 };
-
 
 // Epic hack
 if (typeof window === 'undefined') {

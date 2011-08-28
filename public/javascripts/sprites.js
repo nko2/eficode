@@ -1,4 +1,37 @@
-var gamejs = require('gamejs');
+var gamejs = require('gamejs')
+  , params = window.params;
+
+/* ============================================================================
+ * BaseElement
+ * ============================================================================ */
+
+var BaseElement = function() {
+  BaseElement.superConstructor.apply(this, arguments);
+  
+  this.attrs = {};
+  this.dir = params.Direction.NONE;
+  this.changed = {};
+  this.rect = new gamejs.Rect([0, 0]);
+};
+gamejs.utils.objects.extend(BaseElement, gamejs.sprite.Sprite);
+
+BaseElement.prototype.get = function(attr) {
+  return this.attrs[attr];
+};
+
+BaseElement.prototype.set = function(attr, val) {
+  this.attrs[attr] = val;
+  this.changed[attr] = true;
+};
+
+BaseElement.prototype.getType = function() {
+  return this.type;
+};
+
+BaseElement.prototype.update = function(msDuration) {
+  this.rect.left = this.get('x');
+  this.rect.top  = this.get('y');
+};
 
 /* ============================================================================
  * Animated
@@ -6,69 +39,47 @@ var gamejs = require('gamejs');
 
 var Animated = function() {
 	Animated.superConstructor.apply(this, arguments);
-	this.rect = new gamejs.Rect([0,0]);
-	this.image = null;
 	this.images = [];
-	this.currentImage = -1;
+	this.currentImage = 0;
 	this.ticksSinceLastImageChange = -2;
-	this.moving = 0;
-	this.directionChanged = false;
-	this.dir = -1;
-	this.stateUpdated = false;
-	this.health = 0;
 	
 	return this;
 };
-gamejs.utils.objects.extend(Animated, gamejs.sprite.Sprite);
 
-Animated.prototype.updateState = function(x, y, dir, moving, alive) {
-	if (dir !== this.dir) {
-		this.directionChanged = true;
-		this.currentImage = -1;
-	}
-	
-	this.rect.left = x;
-	this.rect.top = y;
-	this.dir = dir;
-	this.moving = moving;
-	this.alive = alive;
-	this.statusUpdated = true;
-};
+gamejs.utils.objects.extend(Animated, BaseElement);
 
 Animated.prototype.update = function(msDuration) {
+  this.rect.left = this.get('x');
+  this.rect.top  = this.get('y');
+  
+	if (this.get('moving') === 0) {
+		this.image = this.imageGroups[this.get('dir')][0];
+	} else {
     this.ticksSinceLastImageChange += 1;
-    if (this.ticksSinceLastImageChange == 3 || this.directionChanged) {
-        var nextImage = this.currentImage + 1;
+      
+    if (this.ticksSinceLastImageChange == 3 || this.changed['dir']) {
+      var nextImage = this.currentImage + 1;
+      
+      if (nextImage >= this.imageGroups[this.get('dir')].length) {
+        nextImage = 0;
+      }
 
-        this.statusUpdated = false;
-        if (nextImage >= this.imageGroups[this.dir].length) {
-            nextImage = 0;
-        }
-
-        this.image = this.imageGroups[this.dir][nextImage];
-        this.currentImage = nextImage;
-        this.ticksSinceLastImageChange = 0;
-        this.directionChanged = false;
+      this.image = this.imageGroups[this.get('dir')][nextImage];
+      this.currentImage = nextImage;
+      this.ticksSinceLastImageChange = 0;
     }
-
-    if (this.statusUpdated === false && this.moving) {
-        if (this.dir == 1 || this.dir == 2) {
-            var multiplier = (this.dir == 1) ? -1 : 1;
-            this.rect.top = this.rect.top + multiplier * msDuration/1000;
-        } else {
-            var multiplier = (this.dir == 3) ? -1 : 1;
-            this.rect.left = this.rect.left + multiplier * msDuration/1000;
-        }
-    }
-
-    this.statusUpdated = false;
+  }
 };
+
+
+/* ============================================================================
+ * Panda
+ * ============================================================================ */
 
 var Panda = function() {
 	Panda.superConstructor.apply(this, arguments);
-    this.dir = 0;
-	this.health = params.pandaStartHealth;
-    this.alive = 1;
+	
+	this.type = "PANDA";
 	
 	var origRight1 = gamejs.image.load("images/panda_side_1.png");
 	var origRight2 = gamejs.image.load("images/panda_side_2.png");
@@ -93,30 +104,30 @@ var Panda = function() {
 gamejs.utils.objects.extend(Panda, Animated);
 
 Panda.prototype.update = function(msDuration) {
-    if (!this.alive) {
-        this.image = this.deadImage;
-    } else if (this.moving === 0) {
-        this.image = this.imageGroups[0][this.dir];
-    } else {
-        Animated.prototype.update.call(this, msDuration);
-    }
-};
-
-Panda.prototype.setHealth = function(health) {
-  this.health = health;
+  BaseElement.prototype.update.call(this, msDuration);
+  
+  if (!(this.get('alive'))) {
+    this.image = this.deadImage;
+  } else if (this.get('moving') === 0) {
+    this.image = this.imageGroups[0][this.dir];
+  } else {
+    Animated.prototype.update.call(this, msDuration);
+  }
 };
 
 Panda.prototype.draw = function(mainSurface) {
   mainSurface.blit(this.image, this.rect);
   
-  var healthBarWidth = Math.floor(this.health / 100 * 15);
-  var srArray = new gamejs.surfacearray.SurfaceArray([healthBarWidth, 4]);
+  var hbWidth  = Math.floor(this.get('health') / 100 * 15);
+  var hbHeight = 4;
   
-  for (var x = 0; x < healthBarWidth; x++) {
-    for (var y = 0; y < 4; y++) {
+  var srArray = new gamejs.surfacearray.SurfaceArray([hbWidth, hbHeight]);
+  
+  for (var x = 0; x < hbWidth; x++) {
+    for (var y = 0; y < hbHeight; y++) {
       var color = [0, 255, 0];
       
-      if (y == 0 || y == 3 || x == 0 || x == healthBarWidth-1) {
+      if (y == 0 || y == hbHeight-1 || x == 0 || x == hbWidth-1) {
         color = [0, 0, 0];
       }
       
@@ -129,9 +140,15 @@ Panda.prototype.draw = function(mainSurface) {
 };
 
 
+/* ============================================================================
+ * Projectile
+ * ============================================================================ */
+
 var Projectile = function() {
 	Projectile.superConstructor.apply(this, arguments);
 	
+	this.type = "PROJECTILE";
+  
 	var origVertical1 = gamejs.image.load("images/flame_bolt_vert_1.png");
 	var origVertical2 = gamejs.image.load("images/flame_bolt_vert_2.png");
 	var origHorizontal1 = gamejs.image.load("images/flame_bolt_horizontal_1.png");
@@ -147,39 +164,33 @@ var Projectile = function() {
 };
 gamejs.utils.objects.extend(Projectile, Animated);
 
-var Bloodsplash = function(rect) {
-	Bloodsplash.superConstructor.apply(this, arguments);
-	this.rect = new gamejs.Rect(rect);
-	this.image = gamejs.image.load("images/blood_splash.png");
-};
-gamejs.utils.objects.extend(Bloodsplash, gamejs.sprite.Sprite);
 
-var Grass = function(rect) {
+/* ============================================================================
+ * Bloodsplash
+ * ============================================================================ */
+ 
+var Bloodsplash = function() {
+	Bloodsplash.superConstructor.apply(this, arguments);
+	this.image = gamejs.image.load("images/blood_splash.png");
+	this.type = "EXPLOSION";
+	
+};
+gamejs.utils.objects.extend(Bloodsplash, BaseElement);
+
+
+/* ============================================================================
+ * Grass
+ * ============================================================================ */
+
+var Grass = function() {
 	Grass.superConstructor.apply(this, arguments);
-	this.rect = new gamejs.Rect(rect);
 	this.image = gamejs.image.load("images/grass_tile.png");
 	
 	return this;
 };
-gamejs.utils.objects.extend(Grass, gamejs.sprite.Sprite);
-
-var Palm = function(rect) {
-    Palm.superConstructor.apply(this, arguments);
-    this.rect = new gamejs.Rect(rect);
-    this.image = gamejs.image.load("images/palm.png");
-};
-gamejs.utils.objects.extend(Palm, gamejs.sprite.Sprite);
-
-var Sand = function(rect) {
-    Sand.superConstructor.apply(this, arguments);
-    this.rect = new gamejs.Rect(rect);
-    this.image = gamejs.image.load("images/sand.png");
-};
-gamejs.utils.objects.extend(Sand, gamejs.sprite.Sprite);
+gamejs.utils.objects.extend(Grass, BaseElement);
 
 exports.Panda = Panda;
 exports.Grass = Grass;
 exports.Projectile = Projectile;
 exports.Bloodsplash = Bloodsplash;
-exports.Palm = Palm;
-exports.Sand = Sand;
