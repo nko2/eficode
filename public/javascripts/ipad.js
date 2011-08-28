@@ -43,15 +43,15 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
           , x = touch.clientX
           , y = touch.clientY;
        
-       socket.send('touch move '+x+','+y);
+       socket.send('touch mov '+x+','+y);
        evt.preventDefault();
        return false;
      });
-     moveControls.bind('touchend', function(evt) {
-       socket.send('touch end');
-       evt.preventDefault();
-       return false;
-     });
+//     moveControls.bind('touchend', function(evt) {
+//       socket.send('touch end');
+//       evt.preventDefault();
+//       return false;
+//     });
      
      $(document.body).append(moveControls);
   };
