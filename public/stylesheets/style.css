@@ -53,5 +53,24 @@ body {
 }
 
 #player-list {
+  background-color:#000;
+  color:#fff;
   display:none;
+  list-style-type:none;
+  margin:0;
+  padding:0;
 }
+
+#player-list li {
+  clear:both;
+  padding:20px;
+}
+
+#player-list li .nick {
+  float:left;
+}
+
+#player-list li .score {
+  float:right;
+}
+
