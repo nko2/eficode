@@ -29,30 +29,31 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      }));
      var moveControlsEl = moveControls[0];
      
+     var getControlX = function(x) {
+       return x - $(moveControls).offset().left;
+     };
+     var getControlY = function(y) {
+       return y - $(moveControls).offset().top;
+     };
+     
      moveControlsEl.addEventListener('touchstart', function(evt) {
-       socket.send('touches '+evt.targetTouches+' '+evt.targetTouches[0]);
        var touch = evt.targetTouches[0]
           , x = touch.clientX
           , y = touch.clientY;
-           
-       socket.send('touch start '+x+','+y);
-       socket.send(evt);
+       socket.send('start at '+getControlX(x)+","+getControlY(y));
        evt.preventDefault();
        return false;
      });
      moveControlsEl.addEventListener('touchmove', function(evt) {
-       socket.send('m touches '+evt.targetTouches+' '+evt.targetTouches[0]);
-       
        var touch = evt.targetTouches[0]
           , x = touch.clientX
           , y = touch.clientY;
-       
-       socket.send('touch mov '+x+','+y);
+       socket.send('move at '+getControlX(x)+","+getControlY(y));
        evt.preventDefault();
        return false;
      });
      moveControlsEl.addEventListener('touchend', function(evt) {
-       socket.send('touch end');
+        socket.send('move end');
        return false;
      });
      
