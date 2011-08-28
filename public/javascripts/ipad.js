@@ -9,6 +9,10 @@ var start = function(game, socket) {
       height: '680px',
       minWidth: '960px'
     });
+    $('#header').css({
+      paddingTop: '0',
+      paddingBottom: '0'
+    })
     $('#instructions').hide();
     $('.grid_2').css({
       width: '150px'
@@ -169,8 +173,8 @@ var drawMoveControls = function(ctx, canvas, dir) {
 
 var makeLinearGradient = function(ctx, x1, y1, x2, y2, alpha) {
   var grad = ctx.createLinearGradient(x1, y1, x2, y2);
-  grad.addColorStop(0, 'rgba(100, 100, 100, '+alpha+')');
-  grad.addColorStop(1, 'rgba(80, 80, 80, '+alpha+')');
+  grad.addColorStop(0, 'rgba(150, 150, 150, '+alpha+')');
+  grad.addColorStop(1, 'rgba(120, 120, 120, '+alpha+')');
   return grad;
 }
 
@@ -212,8 +216,8 @@ var drawFireControls = function(fCtx, canvas, alpha) {
   fCtx.strokeStyle = '#000';
   fCtx.fillStyle = '#ccc';
   var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
-  fireGrad.addColorStop(0, 'rgba(100, 100, 100, '+alpha+')');
-  fireGrad.addColorStop(1, 'rgba(80, 80, 80, '+alpha+')');
+  fireGrad.addColorStop(0, 'rgba(150, 150, 150, '+alpha+')');
+  fireGrad.addColorStop(1, 'rgba(120, 120, 120, '+alpha+')');
   fCtx.fillStyle = fireGrad;
   
   fCtx.fillRect(0, 0, 200, 200);
