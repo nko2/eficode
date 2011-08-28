@@ -1,32 +1,13 @@
 var gamejs = require('gamejs')
   , sprites = require('sprites')
-  , params = window.params;
-
-var createLawn = function(width, height) {
-  var lawn = new gamejs.sprite.Group();
-  
-	var i, j;
-	for (i = 0; i < width; i += 15) {
-		for (j = 0; j < height; j += 15) {
-			var tile = new sprites.Grass();
-			tile.set('x', i);
-			tile.set('y', j);
-			
-			lawn.add(tile);
-		}
-	}
-	
-	// Required for BaseElement to set rectangle
-	lawn.update(0);
-	
-	return lawn;
-};
+  , params = window.params
+  , Background = require('pre_canvas').Background;
 
 var Game = function(width, height, socket) {
   this.socket = socket;
   this.elements = {};
   this.currentDirection = params.Direction.NONE;
-  this.lawn = createLawn(width, height);
+  this.background = new Background(); 
 };
 
 Game.prototype.update = function(msDuration) {
@@ -60,9 +41,10 @@ Game.prototype.fire = function() {
 };
 
 Game.prototype.draw = function(mainSurface) {
-	mainSurface.fill("#FFFFFF");	
-  this.lawn.draw(mainSurface);
-  
+  mainSurface.fill("#FFFFFF");	
+  background.drawGrass(mainSurface);
+  background.drawSand(mainSurface);
+
   // Group all elements by type
   var byType = { EXPLOSION : [], PROJECTILE: [], PANDA: [], PALM: [] };
   _(this.elements).each(function(el, id) {
@@ -75,7 +57,9 @@ Game.prototype.draw = function(mainSurface) {
       el.draw(mainSurface);
     });
   });
-  
+
+  background.drawPalms(mainSurface);
+
   // Update score board
   $("#player-list").empty();
   
