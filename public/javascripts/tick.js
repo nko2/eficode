@@ -6,6 +6,8 @@ var start = function(display, socket, gameInit) {
 	var allAnimals = {};
 	var projectiles = new gamejs.sprite.Group();
 	var explosions = new gamejs.sprite.Group();
+    var palms = [];
+    var sands = [];
 	
 	var getDirectionValue = function(key) {
 		switch (key) {
@@ -66,7 +68,7 @@ var start = function(display, socket, gameInit) {
 		return new sprites.Panda();
 	};
 	
-	var handlePanda = function(nick, x, y, dir, moving, health, score) {
+	var handlePanda = function(nick, x, y, dir, moving, health, score, alive) {
 		$('#player-list').append($('<li>').text(nick + ": " + health + " - " + score));
 		
 		var panda = allAnimals[nick];
@@ -74,7 +76,7 @@ var start = function(display, socket, gameInit) {
 			panda = allAnimals[nick] = createPanda();
 		}
 		
-		panda.updateState(x, y, dir, moving);
+		panda.updateState(x, y, dir, moving, alive);
 		panda.setHealth(health);
 	};
 	
@@ -92,7 +94,7 @@ var start = function(display, socket, gameInit) {
 		projectiles = new gamejs.sprite.Group();
 		explosions  = new gamejs.sprite.Group();
 		
-    $('#player-list').empty();
+        $('#player-list').empty();
 		var allPandasInState = {};
 		
 		_(state.pa).each(function(panda) {
@@ -117,8 +119,8 @@ var start = function(display, socket, gameInit) {
 
 	var grass = new gamejs.sprite.Group();
 	var i, j;
-	for (i = 0; i < 600; i += 15) {
-		for (j = 0; j < 600; j += 15) {
+	for (i = 0; i < params.gameWidth; i += 15) {
+		for (j = 0; j < params.gameHeight; j += 15) {
 			grass.add(new sprites.Grass([i, j]));
 		}
 	}
@@ -128,6 +130,9 @@ var start = function(display, socket, gameInit) {
 		mainSurface.fill("#FFFFFF");
 		
 		grass.draw(mainSurface);
+        _(sands).each(function(sand) {
+            sand.draw(gamejs.display.getSurface())
+        });
 		projectiles.update(msDuration);
 		projectiles.draw(mainSurface);
 		
@@ -159,9 +164,26 @@ var start = function(display, socket, gameInit) {
 		
 		
 		explosions.draw(mainSurface);
+        _(palms).each(function(palm) {
+            palm.draw(gamejs.display.getSurface())
+        });
+
 	};
 	handleGameState(gameInit);
-	gamejs.time.fpsCallback(tick, this, 25);
+
+	gamejs.time.fpsCallback(tick, this, 15);
+    _(_.range(500)).each(function() {
+        var x, y;
+        x = Math.floor(Math.random() * params.gameWidth);
+        y = Math.floor(Math.random() * params.gameHeight)
+        palms.push(new sprites.Palm([x,y]));
+    });
+    _(_.range(20)).each(function() {
+        var x, y;
+        x = Math.floor(Math.random() * params.gameWidth);
+        y = Math.floor(Math.random() * params.gameHeight)
+        sands.push(new sprites.Sand([x,y]));
+    });
 };
 
 exports.start = start;

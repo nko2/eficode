@@ -1,4 +1,4 @@
-var params = require('./params')
+var params = require('./public/javascripts/params')
   , geometry = require('./geometry')
   , _ = require('underscore');
 
@@ -21,6 +21,13 @@ movement = {
   
   updatePandaPosition: function(panda, allPandas) {
     var speed = params.Speed.PANDA;
+    if (panda.alive !== 1) {
+        panda.respawnTicks -= 1;
+        if (panda.respawnTicks === 0) {
+            respawnPanda(panda);
+        }
+        return;
+    }
 
     if (!panda.moving) return;
 

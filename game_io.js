@@ -1,4 +1,5 @@
 var game = require('./game')
+  , uid = require('./uid')
   , _ = require('underscore');
 
 
@@ -6,7 +7,7 @@ function serializeState(state) {
   var serializedState = {};
   if (state.pandas && state.pandas.length > 0) {
     serializedState.pa = _(state.pandas).map(function(panda) {
-      return [panda.nick, panda.x, panda.y, panda.dir, panda.moving, panda.health, panda.score];
+      return [panda.nick, panda.x, panda.y, panda.dir, panda.moving, panda.health, panda.score, panda.alive];
     });
   }
   if (state.projectiles && state.projectiles.length > 0) {
@@ -30,7 +31,7 @@ module.exports = function(io) {
       if (_(game.getNicks()).include(nick)) {
         callback({status: false});
       } else {
-        var id = '' + new Date().getTime() + Math.random();
+        var id = uid();
         game.playerJoined(id, nick);
         socket.on('startMoving', function(direction, callback) {
           game.playerStartedMoving(id, direction);

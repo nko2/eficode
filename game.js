@@ -1,6 +1,6 @@
 var evt = require('events')
   , _ = require('underscore')
-  , params = require('./params')
+  , params = require('./public/javascripts/params')
   , geom = require('./geometry')
   , movement = require('./movement')
   , game = new evt.EventEmitter()
@@ -10,14 +10,15 @@ var evt = require('events')
 
 game.playerJoined = function(id, nick) {
   var playerPos = movement.findNewPosForPanda(pandas);
-  pandas[id] = {
+   pandas[id] = {
     nick: nick,
     x: playerPos.x,
     y: playerPos.y,
     dir: params.Direction.NONE,
     moving: 0,
     health: params.pandaStartHealth,
-    score: 0
+    score: 0,
+    alive: 1
   };
 };
 game.playerLeft = function(id) {
@@ -99,17 +100,27 @@ function detectExplosions() {
     explosions.push({x: panda.x, y: panda.y, age: 0});
     panda.health -= params.projectileDamage;
     if (panda.health <= 0) {
-        var newPos = movement.findNewPosForPanda(pandas);
+        killPanda(panda);
         if (shooter) {
             shooter.score += params.projectileKillScore;
         }
-        panda.x = newPos.x;
-        panda.y = newPos.y;
-        panda.moving = 0;
-        panda.health = params.pandaStartHealth;
     }
   });
 };
+
+respawnPanda = function(panda) {
+    panda.alive = 1;
+    var newPos = movement.findNewPosForPanda(pandas);
+    panda.x = newPos.x;
+    panda.y = newPos.y;
+    panda.moving = 0;
+    panda.health = params.pandaStartHealth;
+}
+
+function killPanda(panda) {
+    panda.alive = 0;
+    panda.respawnTicks = params.respawnTicks;
+}
 
 function removeDistinguishedExplosions() {
   explosions = _(explosions).select(function(e) {

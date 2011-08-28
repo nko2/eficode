@@ -1,7 +1,5 @@
-#login
-  h1 Sad Pandas
+#login.grid_2.prefix_2.suffix_6
   p Please use Google Chrome (slow on Firefox).
-  
   form(onsubmit="return false;")
     label
       | Your name, plz:
@@ -12,13 +10,12 @@
       | If you feel lucky:
       input#start(type='button', value='Start')
 
-#main(style='display: none;')
-  #sidebar
-    h1 Sad Pandas
-    h2 Instructions
-    p Arrow keys move, space shoots
-    
+#main
+  #left-bar.grid_2
     h2 Players
     ul#player-list
     span#health
-  canvas#gjs-canvas
+    h2 Instructions
+    p Arrow keys move, space shoots
+  #game.grid_7.suffix_1
+    canvas#gjs-canvas
