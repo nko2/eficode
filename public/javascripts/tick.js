@@ -2,7 +2,8 @@ var gamejs = require('gamejs')
   , sprites = require('sprites')
 	, utils = require('utils')
 	, Game = require('game').Game
-	, params = window.params;
+	, params = window.params
+	, ipad = require('ipad');
 
 var start = function(display, socket) {
   socket.on('gameStateDelta', function(state) {
@@ -10,6 +11,9 @@ var start = function(display, socket) {
 	});
 	
 	var game = new Game(params.gameWidth, params.gameHeight, socket);
+	
+	ipad.start(game, socket);
+	
   socket.emit('startGame', function(gameInit) {
   	game.updateState(gameInit);
   });

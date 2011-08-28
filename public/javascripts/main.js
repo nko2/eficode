@@ -1,5 +1,5 @@
 var gamejs = require('gamejs'),
-	tick = require('tick');
+	  tick = require('tick');
 
 $(document).ready(function() {
 	var socket = io.connect();

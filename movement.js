@@ -1,5 +1,5 @@
 var params = require('./public/javascripts/params')
-  , geometry = require('./geometry')
+  , geometry = require('./public/javascripts/geometry')
   , _ = require('underscore');
 
 module.exports = {
