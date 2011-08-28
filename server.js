@@ -20,6 +20,10 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
+io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
+io.set('browser client minification', true);
+io.set('browser client etag', true);
+io.set('log level', 3);
 
 app.get('/', function(req, res){
   res.render('index');
