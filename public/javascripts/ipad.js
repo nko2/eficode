@@ -29,7 +29,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      }));
      var moveControlsEl = moveControls[0];
      
-     moveControlsObj.addEventListener('touchstart', function(evt) {
+     moveControlsEl.addEventListener('touchstart', function(evt) {
        socket.send('touches '+evt.targetTouches+' '+evt.targetTouches[0]);
        var touch = evt.targetTouches[0]
           , x = touch.clientX
@@ -39,7 +39,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        socket.send(evt);
        return false;
      });
-     moveControlsObj.addEventListener('touchmove', function(evt) {
+     moveControlsEl.addEventListener('touchmove', function(evt) {
        socket.send('m touches '+evt.targetTouches+' '+evt.targetTouches[0]);
        
        var touch = evt.targetTouches[0]
@@ -49,7 +49,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        socket.send('touch mov '+x+','+y);
        return false;
      });
-     moveControlsObj.addEventListener('touchend', function(evt) {
+     moveControlsEl.addEventListener('touchend', function(evt) {
        socket.send('touch end');
        return false;
      });
