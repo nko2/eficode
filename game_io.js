@@ -8,10 +8,13 @@ module.exports = function(io) {
   io.sockets.on('connection', function(socket) {
     socket.on('join', function(nick, callback) {
       if (_(game.getNicks()).include(nick)) {
-        callback({status: false});
+        callback(false);
       } else {
         var id = uid();
-        game.playerJoined(id, nick);
+        socket.on('startGame', function(callback) {
+          game.playerJoined(id, nick);
+          callback(game.getState());
+        });
         socket.on('startMoving', function(direction, callback) {
           game.playerStartedMoving(id, direction);
           if (callback) callback();
@@ -27,7 +30,7 @@ module.exports = function(io) {
         socket.on('disconnect', function() {
           game.playerLeft(id);
         });
-        callback({status: true, gameState: game.getState()});
+        callback(true);
       }
     });
   });
