@@ -96,7 +96,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
         height: '200px',
         backgroundColor: 'black'
       }));
-      var fireCanvas = moveControls[0];
+      var fireCanvas = fireControls[0];
       var ctx = fireCanvas.getContext('2d');
       $(document.body).append(fireControls);
           
