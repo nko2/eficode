@@ -5,20 +5,28 @@ $(document).ready(function() {
 	var socket = io.connect();
 
 	var scaleToFitWindow = function() {
-	  var areaWidth = $(window).width() - $('#sidebar').width() - 20
-      , areaHeight = $(window).height() - $('#header').height() - 20
+	  var areaWidth = $("#main").width()
+      , areaHeight = $(window).height() - $("#header").height() - 140
       , resizeFactor = Math.min(areaWidth / window.params.gameWidth, areaHeight / window.params.gameHeight);
     
     $("#gjs-canvas").css({
       width: window.params.gameWidth * resizeFactor,
       height: window.params.gameHeight * resizeFactor
     });
+    
+    $("#wrapper").css({
+      width: window.params.gameWidth * resizeFactor
+    });
+    
+    $("#instructions").css({
+      width: window.params.gameWidth * resizeFactor
+    })
 	};
 
 
 	var main = function() {
-		$("#login").remove();
-		$("#main").show();
+		$("#login-splash").remove();
+		$("#wrapper").show();
 		
 		display = gamejs.display.setMode([window.params.gameWidth, window.params.gameHeight]);    
 		scaleToFitWindow();
