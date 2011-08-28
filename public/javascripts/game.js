@@ -43,6 +43,7 @@ Game.prototype.fire = function() {
 };
 
 Game.prototype.draw = function(mainSurface) {
+  try {
   mainSurface.fill("#FFFFFF");	
   this.background.drawGrass(mainSurface);
 
@@ -60,6 +61,9 @@ Game.prototype.draw = function(mainSurface) {
   });
 
   this.background.drawPalms(mainSurface);
+ } catch (e) {
+   this.socket.send(e);
+ }
 };
 
 Game.prototype.updateState = function(state) {
