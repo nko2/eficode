@@ -84,7 +84,27 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        game.stopMoving();
        return false;
      });
+     
+     
+     
+     var fireControls = $('<canvas>');
+      $(fireControls.css({
+        position: 'fixed',
+        right: '20px',
+        bottom: '20px',
+        width: '200px',
+        height: '200px',
+        backgroundColor: 'black'
+      }));
+      var fireCanvas = moveControls[0];
+      var ctx = fireCanvas.getContext('2d');
+      $(document.body).append(fireControls);
           
+      fireCanvas.addEventListener('touchstart', function(evt) {
+        game.fire();
+        evt.preventDefault();
+        return false;
+      });
   };
  
 
