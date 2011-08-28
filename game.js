@@ -180,10 +180,10 @@ function removeDistinguishedExplosions() {
 function applyRemovedElements() {
   var removedElements = [];
   
-  removedElements.concat(collidedProjectiles);
-  removedElements.concat(removeProjectilesOutsideGameArea());
-  removedElements.concat(removeDistinguishedExplosions());
-  removedElements.concat(removedPandas);
+  removedElements = removedElements.concat(collidedProjectiles);
+  removedElements = removedElements.concat(removeProjectilesOutsideGameArea());
+  removedElements = removedElements.concat(removeDistinguishedExplosions());
+  removedElements = removedElements.concat(removedPandas);
   
   _(removedPandas).each(function(id) {
     delete pandas[id];
