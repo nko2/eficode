@@ -3,6 +3,7 @@ html
   head
     title  Sad Pandas
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/grid.css')
     link(href='http://fonts.googleapis.com/css?family=Bowlby+One+SC', rel='stylesheet', type='text/css')
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js')
     script(src='/socket.io/socket.io.js')
@@ -11,7 +12,9 @@ html
     script(src='/javascripts/gamejs-wrapped.js')
     script(src='/javascripts/params.js')
     script(src='/javascripts/init.js')
-  body
+  body.container_4
     span
       iframe(src='http://nodeknockout.com/iframe/eficode', frameborder='0', scrolling='no', allowtransparency='true', width='115', height='25')
+    .grid_1.prefix_1.suffix_2
+      h1 Sad Pandas
     != body
