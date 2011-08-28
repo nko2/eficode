@@ -40,15 +40,15 @@ var start = function(display, socket) {
 			}
 		});
 		
-		if (byType[gamejs.event.KEY_UP].length > 0) {
-		  var e = byType[gamejs.event.KEY_UP][0];
-		  onKeyUp(e.key);
-		}
-		
 		if (byType[gamejs.event.KEY_DOWN].length > 0) {
 		  _(byType[gamejs.event.KEY_DOWN]).each(function(e) {
 		    onKeyDown(e.key);
 		  });
+		}
+		
+		if (byType[gamejs.event.KEY_UP].length > 0) {
+		  var e = byType[gamejs.event.KEY_UP][0];
+		  onKeyUp(e.key);
 		}
 	};
 	

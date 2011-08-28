@@ -52,14 +52,13 @@ Animated.prototype.update = function(msDuration) {
   this.rect.top  = this.get('y');
   
 	if (this.get('moving') === 0) {
-		this.image = this.imageGroups[0][this.get('dir')];
+		this.image = this.imageGroups[this.get('dir')][0];
 	} else {
     this.ticksSinceLastImageChange += 1;
       
-    if (this.ticksSinceLastImageChange == 3 || this.changed['direction']) {
+    if (this.ticksSinceLastImageChange == 3 || this.changed['dir']) {
       var nextImage = this.currentImage + 1;
       
-      console.log(this.attrs);
       if (nextImage >= this.imageGroups[this.get('dir')].length) {
         nextImage = 0;
       }
