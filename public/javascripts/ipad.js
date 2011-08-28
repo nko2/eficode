@@ -71,7 +71,7 @@ var addMoveControls = function(game) {
    moveCanvas.addEventListener('touchstart', function(evt) {
      var touch = evt.targetTouches[0]
         , dir = getDirection(touch.clientX, touch.clientY);
-     if (dir) {
+     if (dir &&  dir !== game.currentDirection) {
        game.changeDirection(dir);
      }
      drawMoveControls(ctx, moveCanvas, dir);
@@ -81,7 +81,7 @@ var addMoveControls = function(game) {
    moveCanvas.addEventListener('touchmove', function(evt) {
      var touch = evt.targetTouches[0]
         , dir = getDirection(touch.clientX, touch.clientY);
-     if (dir) {
+     if (dir &&  dir !== game.currentDirection) {
       game.changeDirection(dir);
      }
      drawMoveControls(ctx, moveCanvas, dir);
