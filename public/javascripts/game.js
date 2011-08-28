@@ -52,14 +52,15 @@ Game.prototype.draw = function(mainSurface) {
     byType[el.getType()].push(el);
   });
   
+  var self = this;
   // Draw in correct order
   _(["PROJECTILE", "PANDA", "EXPLOSION", "PALM"]).each(function(type) {
     _(byType[type]).each(function(el) {
       try {
       el.draw(mainSurface);
       } catch (e) {
-        this.socket.send(e);
-        this.socket.send(el.getType())
+        self.socket.send(e);
+        self.socket.send(el.getType())
       }
     });
   });
