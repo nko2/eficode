@@ -52,7 +52,6 @@ Game.prototype.draw = function(mainSurface) {
     byType[el.getType()].push(el);
   });
   
-  var self = this;
   // Draw in correct order
   _(["PROJECTILE", "PANDA", "EXPLOSION", "PALM"]).each(function(type) {
     _(byType[type]).each(function(el) {
