@@ -5,9 +5,9 @@ var start = function(game, socket) {
   //if (isPad) {
     $('<meta name="viewport" content="width=device-width,maximum-scale=1.0" />').appendTo($('head'));
     $('.container_10').css({
-      width: '900px',
-      height: '600px',
-      minWidth: '1024px'
+      width: '960px',
+      height: '680px',
+      minWidth: '960px'
     });
     $('#header, #instructions').hide();
     $('.grid_2').css({
