@@ -20,7 +20,7 @@ $(document).ready(function() {
     
     $("#instructions").css({
       width: window.params.gameWidth * resizeFactor
-    })
+    });
 	};
 
 
