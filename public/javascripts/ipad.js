@@ -4,6 +4,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
 var start = function(game, socket) {
   //if (isPad) {
     $('<meta name="viewport" content="width=device-width,maximum-scale=1.0" />').appendTo($('head'));
+    
     $('.container_10').css({
       width: '960px',
       height: '680px',
@@ -36,7 +37,6 @@ var addMoveControls = function(game) {
    var moveCanvas = moveControls[0];
    moveCanvas.width = 200;
    moveCanvas.height= 200;
-   moveCanvas.globalAlpha = 0.5;
    
    var ctx = moveCanvas.getContext('2d');
    
@@ -152,8 +152,8 @@ var addMoveControls = function(game) {
 
 var makeLinearGradient = function(ctx, x1, y1, x2, y2) {
   var grad = ctx.createLinearGradient(x1, y1, x2, y2);
-  grad.addColorStop(0, '#ddd');
-  grad.addColorStop(1, '#bbb');
+  grad.addColorStop(0, 'rgba(100, 100, 100, 0.5)');
+  grad.addColorStop(1, 'rgba(80, 80, 80, 0.5)');
   return grad;
 }
 
@@ -177,8 +177,8 @@ var addFireControls = function(game) {
    fCtx.fillStyle = '#ccc';
 
    var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
-   fireGrad.addColorStop(0, '#ddd');
-   fireGrad.addColorStop(1, '#bbb');
+   fireGrad.addColorStop(0, 'rgba(100, 100, 100, 0.5)');
+   fireGrad.addColorStop(1, 'rgba(80, 80, 80, 0.5)');
    fCtx.fillStyle = fireGrad;
    
    fCtx.fillRect(0, 0, 200, 200);
