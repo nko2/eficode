@@ -47,7 +47,7 @@ $(document).ready(function() {
              "images/grass_tile.png",
              "images/flame_bolt_horizontal_1.png", "images/flame_bolt_horizontal_2.png",
              "images/blood_splash.png", "images/palm.png",
-             "images/dead_panda.png",
+             "images/dead_panda.png", "images/rock.png",
              "images/sand.png"
             ]);
         
