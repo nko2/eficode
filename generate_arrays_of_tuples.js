@@ -1,6 +1,6 @@
 var count = process.argv[2];
 var name = process.argv[3];
-var do_epic_hack = process.argv[4];
+var export = process.argv[4];
 var tuples = [];
 var _ = require('./public/javascripts/underscore-min.js')._;
 var params = require('./public/javascripts/params.js');
@@ -11,11 +11,7 @@ _(_.range(count)).each(function() {
     y = Math.random() * params.gameHeight;
     tuples.push([Math.floor(x),Math.floor(y)]);
 });
-console.log(name + " = " + util.inspect(tuples) + ";");
-
-if(do_epic_hack) {
-    console.log("// Epic hack");
-    console.log("if (typeof window === 'undefined') {");
-    console.log("  module.exports = " + name + ";");
-    console.log("}");
+console.log("var " + name + " = " + util.inspect(tuples) + ";");
+if(export) {
+    console.log("exports = " + name + ";");
 }
