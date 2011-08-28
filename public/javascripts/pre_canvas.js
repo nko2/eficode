@@ -1,6 +1,7 @@
 var gamejs = require('gamejs')
   , params = window.params
   , palmCoordinates = require('palm_coordinates').coords
+  , rockCoordinates = require('rock_coordinates').coords
   , sandCoordinates = require('sand_coordinates').coords;
 
 var drawImage = function(img, coordinates, surface, rect) {
@@ -56,6 +57,9 @@ var Background = function() {
 
   var sandImage = gamejs.image.load("images/sand.png");
   drawImage(sandImage, sandCoordinates, this.grassSurface);
+
+  var rockImage = gamejs.image.load("images/rock.png");
+  drawImage(rockImage, rockCoordinates, this.grassSurface);
 
   rect = new gamejs.Rect([0,25],[50,22]);
   drawImage(palmImage, palmCoordinates, this.grassSurface, rect);
