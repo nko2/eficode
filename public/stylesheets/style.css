@@ -2,32 +2,56 @@ body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  font-family: 'Bowlby One SC', sans-serif;
+  font-family: 'Delius Unicase', sans-serif;
+  background:#7fb548 url('/images/body_bg.png');
 }
 
-#main {
-    display: none;
+#login-splash {
+  width:20%;
+  position:absolute;
+  top:30%;
+  left:40%;
+  text-align:center;
+  color:#fff;
 }
 
-#player-list {
-  list-style-type:none;
-  margin:0;
-  padding:0;
+#login-splash img {
+  padding-bottom:20px;
 }
 
-#player-list > li {
-  clear:both;
+#login-splash #nick {
+  width:150px;
 }
 
-#player-list > li > div.nick {
-  float:left;
+#wrapper {
+  display:none;
+  margin:0 auto;
 }
 
-#player-list > li > div.score {
-  float:right;
+#header {
+  padding-top:36px;
+  padding-bottom:15px;
+  width:256px;
+  height:80px;
 }
 
 #instructions {
-  padding-top:20px;
-  clear:both;
+  font-size:0.8em;
+  padding:0;
+  list-style-type:none;
+  text-align:center;
+}
+
+#instructions > li {
+  display:inline;
+  margin-right:20px;
+  color:#fff;
+}
+
+#gjs-canvas {
+  border:3px solid #5ca21a;
+}
+
+#player-list {
+  display:none;
 }

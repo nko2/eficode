@@ -1,22 +1,23 @@
-#login.grid_2.prefix_2.suffix_6
-  p Best viewed with Chrome, Safari, or your iPad.
+#login-splash
+  img(src="/images/sadpandas.png", alt="Sad Pandas", title="Sad Pandas")
+    
   form(onsubmit="return false;")
-    label
-      | Your name, plz:
+    label(for="nick") Enter your nick:
+    p
       input#nick(type='text', name='user[name]', autofocus)
     #login-fail(style='display: none;') Sorry, this nick has already been knicked.
-    br
-    label
-      | If you feel lucky:
+    p
       input#start(type='button', value='Start')
 
-#main
-  #left-bar.grid_2
-    h2 Players
+#wrapper
+  #header
+    img(src="/images/sadpandas.png", alt="Sad Pandas", title="Sad Pandas")
+
+  #main
     ul#player-list
-    span#health
-    #instructions
-      h2 Instructions
-      p Arrow keys move, space shoots
-  #game.grid_7.suffix_1
-    canvas#gjs-canvas
+    ul#instructions
+      li MOVE: ARROW KEYS
+      li SHOOT: SPACE
+      li TAB: SCORES
+    #game
+      canvas#gjs-canvas
