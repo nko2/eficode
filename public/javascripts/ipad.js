@@ -47,6 +47,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
           , y = touch.clientY;
        
        socket.send('touch mov '+x+','+y);
+       evt.preventDefault();
        return false;
      });
      moveControlsEl.addEventListener('touchend', function(evt) {
