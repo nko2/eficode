@@ -14,6 +14,7 @@ var evt = require('events')
   , newProjectiles = {}
   , collidedProjectiles = []
   , explosions = {}
+  , notifications = []
   , newExplosions = {};
 
 // External API
@@ -114,6 +115,12 @@ function getProjectileDimensions(dir) {
   }
 };
 
+function killPanda(panda) {
+  panda.alive = 0;
+  panda.respawnTicks = params.respawnTicks;
+}
+
+//<<<<<<< Updated upstream
 function poorPandaWasShot(pandaId, panda, shooterId, shooter) {
   if (!pandaDeltas[pandaId]) pandaDeltas[pandaId] = {};
   
@@ -121,36 +128,46 @@ function poorPandaWasShot(pandaId, panda, shooterId, shooter) {
   pandaDeltas[pandaId].health = panda.health;
   
   if (panda.health <= 0) {
+    killPanda(panda);
+    notifications.push({type: 'kill', killer: shooter.nick, killed: panda.nick});
+    console.log(notifications);
     if (shooter) {
       shooter.score += params.projectileKillScore;
-          
       if (!pandaDeltas[shooterId]) {
         pandaDeltas[shooterId] = {};
       }
       pandaDeltas[shooterId].score = shooter.score;
     }
-
-    panda.alive = 0;
-    panda.respawnTicks = params.respawnTicks;
-       
     pandaDeltas[pandaId].alive = panda.alive;
   }
 }
 
 function applyProjectileCollisions() {
+  // Detect collisions between pandas and projectiles
+  var collisions = [];
   _(projectiles).each(function(proj, id) {
     var projDim = getProjectileDimensions(proj.dir);
     _(pandas).each(function (panda, pandaId) {
       if (panda.alive === 1) {
         if (geom.rectsIntersect(proj.x,  proj.y,  projDim.width,     projDim.height,
                                 panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
-          collidedProjectiles.push(id);                            
+          collidedProjectiles.push(id);
           newExplosions[uid()] = {x: panda.x, y: panda.y, age: 0};
           poorPandaWasShot(pandaId, panda, proj.owner, pandas[proj.owner]);
         }
       }
     });
   });
+//<<<<<<< Updated upstream
+//=======
+  //// Create explosions at each collisions and handle damage
+  //_(collisions).each(function(coll) {
+    //var panda = coll[0]
+      //, proj = coll[1]
+      //, shooter = pandas[proj.owner];
+    //projectiles = _(projectiles).without(proj);
+  //});
+//>>>>>>> Stashed changes
 };
 
 respawnPanda = function(pandaId, panda) {
@@ -197,8 +214,13 @@ function removeDistinguishedExplosions() {
   var newElements = applyNewElements();
   if (!_(newElements).isEmpty()) stateDelta.newElements = newElements;
 
+    if (notifications.length > 0) {
+      stateDelta.n = notifications;
+      notifications = [];
+    }
   var deltas = applyMovements();
   if (!_(deltas).isEmpty()) stateDelta.deltas = deltas;
+    
   
   if (!_(stateDelta).isEmpty()) {
     game.emit('stateDelta', stateDelta);
