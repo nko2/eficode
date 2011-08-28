@@ -43,7 +43,6 @@ Game.prototype.fire = function() {
 };
 
 Game.prototype.draw = function(mainSurface) {
-  try {
   mainSurface.fill("#FFFFFF");	
   this.background.drawGrass(mainSurface);
 
@@ -56,14 +55,17 @@ Game.prototype.draw = function(mainSurface) {
   // Draw in correct order
   _(["PROJECTILE", "PANDA", "EXPLOSION", "PALM"]).each(function(type) {
     _(byType[type]).each(function(el) {
+      try {
       el.draw(mainSurface);
+      } catch (e) {
+        this.socket.send(e);
+        this.socket.send(el.getType())
+      }
     });
   });
 
   this.background.drawPalms(mainSurface);
- } catch (e) {
-   this.socket.send(e);
- }
+
 };
 
 Game.prototype.updateState = function(state) {
