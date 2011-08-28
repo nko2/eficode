@@ -6,6 +6,8 @@ var start = function(display, socket, gameInit) {
 	var allAnimals = {};
 	var projectiles = new gamejs.sprite.Group();
 	var explosions = new gamejs.sprite.Group();
+    var palms = [];
+    var sands = [];
 	
 	var getDirectionValue = function(key) {
 		switch (key) {
@@ -128,6 +130,9 @@ var start = function(display, socket, gameInit) {
 		mainSurface.fill("#FFFFFF");
 		
 		grass.draw(mainSurface);
+        _(sands).each(function(sand) {
+            sand.draw(gamejs.display.getSurface())
+        });
 		projectiles.update(msDuration);
 		projectiles.draw(mainSurface);
 		
@@ -159,9 +164,25 @@ var start = function(display, socket, gameInit) {
 		
 		
 		explosions.draw(mainSurface);
+        _(palms).each(function(palm) {
+            palm.draw(gamejs.display.getSurface())
+        });
+
 	};
 	handleGameState(gameInit);
 	gamejs.time.fpsCallback(tick, this, 15);
+    _(_.range(500)).each(function() {
+        var x, y;
+        x = Math.floor(Math.random() * params.gameWidth);
+        y = Math.floor(Math.random() * params.gameHeight)
+        palms.push(new sprites.Palm([x,y]));
+    });
+    _(_.range(20)).each(function() {
+        var x, y;
+        x = Math.floor(Math.random() * params.gameWidth);
+        y = Math.floor(Math.random() * params.gameHeight)
+        sands.push(new sprites.Sand([x,y]));
+    });
 };
 
 exports.start = start;

@@ -162,7 +162,24 @@ var Grass = function(rect) {
 };
 gamejs.utils.objects.extend(Grass, gamejs.sprite.Sprite);
 
+var Palm = function(rect) {
+    Palm.superConstructor.apply(this, arguments);
+    this.rect = new gamejs.Rect(rect);
+    this.image = gamejs.image.load("images/palm.png");
+};
+gamejs.utils.objects.extend(Palm, gamejs.sprite.Sprite);
+
+var Sand = function(rect) {
+    Sand.superConstructor.apply(this, arguments);
+    this.rect = new gamejs.Rect(rect);
+    this.image = gamejs.image.load("images/sand.png");
+};
+gamejs.utils.objects.extend(Sand, gamejs.sprite.Sprite);
+
+
 exports.Panda = Panda;
 exports.Grass = Grass;
 exports.Projectile = Projectile;
 exports.Bloodsplash = Bloodsplash;
+exports.Palm = Palm;
+exports.Sand = Sand;
