@@ -162,13 +162,13 @@ function removeDistinguishedExplosions() {
   var stateDelta = {};
   
   var removedElements = applyRemovedElements();
-  if (!_(removedElements).isEmpty()) stateDelta['removedElements'] = removedElements;
+  if (!_(removedElements).isEmpty()) stateDelta.removedElements = removedElements;
     
   var newElements = applyNewElements();
-  if (!_(newElements).isEmpty()) stateDelta['newElements'] = newElements;
+  if (!_(newElements).isEmpty()) stateDelta.newElements = newElements;
 
   var deltas = applyMovements();
-  if (!_(deltas).isEmpty()) stateDelta['deltas'] = deltas;
+  if (!_(deltas).isEmpty()) stateDelta.deltas = deltas;
   
   if (!_(stateDelta).isEmpty()) {
     game.emit('stateDelta', stateDelta);
@@ -197,9 +197,9 @@ function applyRemovedElements() {
 function applyNewElements() {
   var newElements = {};
   
-  if (!_(newPandas).isEmpty())      newElements['PANDA'] = newPandas;
-  if (!_(newProjectiles).isEmpty()) newElements['PROJECTILE'] = newProjectiles;
-  if (!_(newExplosions).isEmpty())  newElements['EXPLOSION'] = newExplosions;
+  if (!_(newPandas).isEmpty())      newElements.PANDA = newPandas;
+  if (!_(newProjectiles).isEmpty()) newElements.PROJECTILE = newProjectiles;
+  if (!_(newExplosions).isEmpty())  newElements.EXPLOSION = newExplosions;
   
   _(pandas).extend(newPandas);
   newPandas = {};
@@ -216,11 +216,11 @@ function applyMovements() {
   
   _(pandaMovementCommands).each(function(cmd) {
     if (!deltas[cmd.id]) deltas[cmd.id] = {};
-    deltas[cmd.id]['moving'] = cmd.moving;
-    pandas[cmd.id]['moving'] = cmd.moving;
+    deltas[cmd.id].moving = cmd.moving;
+    pandas[cmd.id].moving = cmd.moving;
     if (cmd.dir) {
-      deltas[cmd.id]['dir'] = cmd.dir;
-      pandas[cmd.id]['dir'] = cmd.dir;
+      deltas[cmd.id].dir = cmd.dir;
+      pandas[cmd.id].dir = cmd.dir;
     }
   });
   pandaMovementCommands = [];
