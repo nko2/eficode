@@ -91,7 +91,7 @@ var Panda = function() {
 	var sittingUp = gamejs.image.load("images/panda_sitting_up.png");
 	var sittingRight = gamejs.image.load("images/panda_sitting_right.png");
 	var sittingLeft = gamejs.transform.flip(sittingRight, true);
-  this.deadImage = gamejs.image.load("images/dead_panda.png");
+  this.deadImage = gamejs.image.load("images/panda_sitting_right.png");
 	
 	this.imageGroups = [
 		/* NONE */	[sittingDown, sittingUp, sittingDown, sittingLeft, sittingRight],

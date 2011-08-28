@@ -60,7 +60,7 @@ Game.prototype.draw = function(mainSurface) {
       el.draw(mainSurface);
       } catch (e) {
         self.socket.send(e);
-        self.socket.send(el.getType())
+        self.socket.send(el.getType());
         self.socket.send(el.image);
       }
     });
