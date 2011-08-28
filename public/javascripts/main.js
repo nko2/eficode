@@ -1,6 +1,5 @@
 var gamejs = require('gamejs'),
-	  tick = require('tick'),
-	  ipad = require('ipad');
+	  tick = require('tick');
 
 $(document).ready(function() {
 	var socket = io.connect();
@@ -25,7 +24,6 @@ $(document).ready(function() {
 		scaleToFitWindow();
 		
 		tick.start(display, socket);
-		ipad.start(socket);
 	};
 
   function start() {

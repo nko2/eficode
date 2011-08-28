@@ -2,7 +2,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
 
 //if (isPad) {
   
-  var start = function(socket) {
+  var start = function(game, socket) {
     
     $('<meta name="viewport" content="width=device-width,maximum-scale=1.0" />').appendTo($('head'));
     $('.container_10').css({
@@ -61,25 +61,30 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      moveCanvas.addEventListener('touchstart', function(evt) {
        var touch = evt.targetTouches[0]
           , x = touch.clientX
-          , y = touch.clientY;
-       socket.send('start moving '+getDirection(x, y));
+          , y = touch.clientY,
+          , dir = getDirection(x, y);
+       if (dir) {
+         game.changeDirection(dir);
+       }
        evt.preventDefault();
        return false;
      });
      moveCanvas.addEventListener('touchmove', function(evt) {
        var touch = evt.targetTouches[0]
           , x = touch.clientX
-          , y = touch.clientY;
-       socket.send('moving '+getDirection(x, y));
+          , y = touch.clientY
+          , dir = getDirection(x, y);
+       if (dir) {
+        game.changeDirection(dir);
+       }
        evt.preventDefault();
        return false;
      });
      moveCanvas.addEventListener('touchend', function(evt) {
-        socket.send('move end');
+       game.stopMoving();
        return false;
      });
-     
-     $(document.body).append(moveControls);
+          
   };
  
 
