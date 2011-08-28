@@ -2,10 +2,11 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
 
   
 var start = function(game, socket) {
-  if (isPad) {
+  //if (isPad) {
     $('<meta name="viewport" content="width=device-width,maximum-scale=1.0" />').appendTo($('head'));
     $('.container_10').css({
       width: '1024px',
+      height: '768px',
       minWidth: '1024px'
     });
     $('#header, #instructions').hide();
@@ -19,7 +20,7 @@ var start = function(game, socket) {
   
     addMoveControls(game);
     addFireControls(game);
-  }
+  //}
 };
 
 var addMoveControls = function(game) {
