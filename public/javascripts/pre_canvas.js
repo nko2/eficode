@@ -10,9 +10,11 @@ var drawImage = function(img, coordinates, surface) {
   
   _(coordinates).each(function(coord) {
     var x = coord[0]
-      , y = coord[1];
+      , y = coord[1]
+      , r = coord[2];
     
-    surface.blit(img, new gamejs.Rect([x, y]));
+    var rotatedImage = gamejs.transform.rotate(img, r);
+    surface.blit(rotatedImage, new gamejs.Rect([x, y]));
    });
 
    return surface;

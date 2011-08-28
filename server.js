@@ -29,7 +29,8 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-app.listen(3000);
+var port = (process.env.NODE_ENV == 'production') ? 80 : 3000;
+app.listen(port);
 gameIo(io);
 
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

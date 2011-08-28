@@ -6,10 +6,14 @@ module.exports = function(io) {
 
   // Client -> Server
   io.sockets.on('connection', function(socket) {
+    var joined = false;
+    
     socket.on('join', function(nick, callback) {
-      if (_(game.getNicks()).include(nick)) {
+      if (_(game.getNicks()).include(nick) || nick.trim().length === 0 || joined === true) {
         callback(false);
       } else {
+        joined = true;
+        
         var id = uid();
         socket.on('startGame', function(callback) {
           game.playerJoined(id, nick);

@@ -8,3 +8,26 @@ body {
 #main {
     display: none;
 }
+
+#player-list {
+  list-style-type:none;
+  margin:0;
+  padding:0;
+}
+
+#player-list > li {
+  clear:both;
+}
+
+#player-list > li > div.nick {
+  float:left;
+}
+
+#player-list > li > div.score {
+  float:right;
+}
+
+#instructions {
+  padding-top:20px;
+  clear:both;
+}

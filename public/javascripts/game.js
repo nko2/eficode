@@ -1,13 +1,15 @@
 var gamejs = require('gamejs')
   , sprites = require('sprites')
   , params = window.params
-  , Background = require('pre_canvas').Background;
+  , Background = require('pre_canvas').Background
+  , Scoreboard = require('scoreboard').Scoreboard;
 
 var Game = function(width, height, socket) {
   this.socket = socket;
   this.elements = {};
   this.currentDirection = params.Direction.NONE;
   this.background = new Background(); 
+  this.scoreboard = new Scoreboard();
 };
 
 Game.prototype.update = function(msDuration) {
@@ -58,13 +60,6 @@ Game.prototype.draw = function(mainSurface) {
   });
 
   this.background.drawPalms(mainSurface);
-
-  // Update score board
-  $("#player-list").empty();
-  
-  _(byType["PANDA"]).each(function(panda) {
-    $('#player-list').append($('<li>').text(panda.get('nick') + ": " + panda.get('score')));
-  });
 };
 
 Game.prototype.updateState = function(state) {
@@ -83,9 +78,13 @@ Game.prototype.updateState = function(state) {
     }
   };
   
-  var updateElement = function(el, deltaUpdates) {
+  var updateElement = function(id, el, deltaUpdates) {
     _(deltaUpdates).each(function(val, attr) {
       el.set(attr, val);
+      
+      if (el.getType() === 'PANDA' && attr == 'score') {
+        that.scoreboard.updateScore(id, val);
+      }
     });
   };
   
@@ -93,7 +92,12 @@ Game.prototype.updateState = function(state) {
     _(state.newElements).each(function(elements, type) {
       _(elements).each(function(elData, id) {
         var el = createElement(type);
-        updateElement(el, elData);
+        
+        if (el.getType() === 'PANDA') {
+          that.scoreboard.addPanda(id, elData.nick, elData.score);
+        }
+        
+        updateElement(id, el, elData);
       
         that.elements[id] = el;
       });
@@ -103,12 +107,17 @@ Game.prototype.updateState = function(state) {
   if (state.deltas !== undefined) {
     _(state.deltas).each(function(deltaUpdates, id) {
       var el = that.elements[id];
-      updateElement(el, deltaUpdates);
+      updateElement(id, el, deltaUpdates);
     });
   }
   
   if (state.removedElements !== undefined) {
     _(state.removedElements).each(function(id) {
+      var el = that.elements[id];
+      if (el.getType() === 'PANDA') {
+        that.scoreboard.removePanda(id);
+      }
+      
       delete that.elements[id];
     });
   }
