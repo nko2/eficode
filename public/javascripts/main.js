@@ -9,6 +9,14 @@ $(document).ready(function() {
 		$("#main").show();
 
 		display = gamejs.display.setMode([600, 600]);
+		var areaWidth = $(window).width() - $('#sidebar').width() - 20
+      , areaHeight = $(window).height()
+      , resizeFactor = Math.min(areaWidth / 600, areaHeight / 600);
+    $("#gjs-canvas").css({
+      width: 600 * resizeFactor,
+      height: 600 * resizeFactor
+    });
+    
 		tick.start(display, socket, gameInit);
 	};
 
