@@ -3,9 +3,7 @@ var nko = require('nko')('omnfFLVFKjn9/jVm')
   , express = require('express')
   , app = express.createServer()
   , io = require('socket.io').listen(app)
-  , gameIo = require('./game_io')
-  , movementFile = fs.readFileSync('./movement.js')
-  , paramsFile = fs.readFileSync('./params.js');
+  , gameIo = require('./game_io');
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -26,10 +24,7 @@ app.configure('production', function(){
 app.get('/', function(req, res){
   res.render('index');
 });
-app.get('/params.js', function(req, res) {
-  res.writeHead(200, {"Content-Type": "text/javascript"});
-  res.end(paramsFile);
-})
+
 app.listen(3000);
 gameIo(io);
 
