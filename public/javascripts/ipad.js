@@ -18,7 +18,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
       paddingRight: '0'
     });
     
-    var moveControls = $('<div>');
+    var moveControls = $('<canvas>');
      $(moveControls.css({
        position: 'fixed',
        left: '20px',
@@ -27,7 +27,14 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        height: '200px',
        backgroundColor: 'black'
      }));
-     var moveControlsEl = moveControls[0];
+     var moveCanvas = moveControls[0];
+     var ctx = moveCanvas.getContext('2d');
+     
+     
+     var upTriangle = [[[0,   0],   [200, 0]],   [[200, 0],   [100, 100]], [[100, 100], [0, 0]]];
+     var downTriangle =   [[[0,   200], [200, 200]], [[200, 200], [100, 100]], [[100, 100], [0, 200]]];
+     var leftTriangle =   [[[0,   0],   [100, 100]], [[100, 100], [0,   200]], [[0,   200], [0, 0]]];
+     var rightTriangle =  [[[200, 0],   [200, 200]], [[200, 200], [100, 100]], [[100, 100], [200, 0]]];
      
      var getControlX = function(x) {
        return x - $(moveControls).offset().left;
@@ -36,23 +43,38 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        return y - $(moveControls).offset().top;
      };
      
-     moveControlsEl.addEventListener('touchstart', function(evt) {
+     var getDirection = function(x, y) {
+       var controlX = getControlX(x)
+         , controlY = getControlY(y)
+         , controlPoint = [x, y];
+       if (geometry.pointWithinPolygon(controlPoint, upTriangle)) {
+         return params.Direction.UP;
+       } else if (geometry.pointWithinPolygon(controlPoint, downTriangle)) {
+         return params.Direction.DOWN;
+       } else if (geometry.pointWithinPolygon(controlPoint, leftTriangle)) {
+         return params.Direction.LEFT;
+       } else if (geometry.pointWithinPolygon(controlPoint, rightTriangle)) {
+          return params.Direction.RIGHT;
+       }
+     };
+     
+     moveCanvas.addEventListener('touchstart', function(evt) {
        var touch = evt.targetTouches[0]
           , x = touch.clientX
           , y = touch.clientY;
-       socket.send('start at '+getControlX(x)+","+getControlY(y));
+       socket.send('start moving '+getDirection(x, y));
        evt.preventDefault();
        return false;
      });
-     moveControlsEl.addEventListener('touchmove', function(evt) {
+     moveCanvas.addEventListener('touchmove', function(evt) {
        var touch = evt.targetTouches[0]
           , x = touch.clientX
           , y = touch.clientY;
-       socket.send('move at '+getControlX(x)+","+getControlY(y));
+       socket.send('moving '+getDirection(x, y));
        evt.preventDefault();
        return false;
      });
-     moveControlsEl.addEventListener('touchend', function(evt) {
+     moveCanvas.addEventListener('touchend', function(evt) {
         socket.send('move end');
        return false;
      });
