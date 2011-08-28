@@ -12,6 +12,10 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
     $('.grid_2').css({
       width: '150px'
     });
+    $('#game').css({
+      width: '750px',
+      paddingRight: '0'
+    });
     
     var moveControls = $('<div>');
      $(moveControls.css({
