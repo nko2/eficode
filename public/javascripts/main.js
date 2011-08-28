@@ -25,8 +25,9 @@ $(document).ready(function() {
                     "images/flame_bolt_vert_1.png", "images/flame_bolt_vert_2.png",
                     "images/grass_tile.png",
                     "images/flame_bolt_horizontal_1.png", "images/flame_bolt_horizontal_2.png",
-                    "images/blood_splash.png",
-                    "images/dead_panda.png"
+                    "images/blood_splash.png", "images/palm.png",
+                    "images/dead_panda.png",
+                    "images/sand.png"
             ]);
             gamejs.ready(function() {
               main(response.gameState);
