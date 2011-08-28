@@ -46,7 +46,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      var getDirection = function(x, y) {
        var controlX = getControlX(x)
          , controlY = getControlY(y)
-         , controlPoint = [x, y];
+         , controlPoint = [controlX, controlY];
        if (geometry.pointWithinPolygon(controlPoint, upTriangle)) {
          return params.Direction.UP;
        } else if (geometry.pointWithinPolygon(controlPoint, downTriangle)) {
