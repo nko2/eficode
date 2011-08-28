@@ -91,7 +91,7 @@ var Panda = function() {
 	var sittingUp = gamejs.image.load("images/panda_sitting_up.png");
 	var sittingRight = gamejs.image.load("images/panda_sitting_right.png");
 	var sittingLeft = gamejs.transform.flip(sittingRight, true);
-    this.deadImage = gamejs.image.load("images/dead_panda.png");
+  this.deadImage = gamejs.image.load("images/dead_panda.png");
 	
 	this.imageGroups = [
 		/* NONE */	[sittingDown, sittingUp, sittingDown, sittingLeft, sittingRight],
@@ -107,7 +107,7 @@ Panda.prototype.update = function(msDuration) {
   BaseElement.prototype.update.call(this, msDuration);
   
   if (!(this.get('alive'))) {
-    this.image = this.deadImage;
+    //this.image = this.deadImage;
   } else if (this.get('moving') === 0) {
     this.image = this.imageGroups[0][this.get('dir')];
   } else {
