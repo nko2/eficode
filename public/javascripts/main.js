@@ -25,30 +25,38 @@ $(document).ready(function() {
 		
 		tick.start(display, socket);
 	};
+	
+	var startClicked = false;
 
   function start() {
-      socket.emit('join', $('#nick').val(), function(ok) {
-        if (ok) {
-          gamejs.preload(
-              ["images/panda_side_1.png", "images/panda_side_2.png",
-               "images/panda_down_1.png", "images/panda_down_2.png",
-               "images/panda_up_1.png", "images/panda_up_2.png",
-               "images/panda_sitting_down.png",
-               "images/panda_sitting_up.png",
-               "images/panda_sitting_right.png",
-               "images/flame_bolt_vert_1.png", "images/flame_bolt_vert_2.png",
-               "images/grass_tile.png",
-               "images/flame_bolt_horizontal_1.png", "images/flame_bolt_horizontal_2.png",
-               "images/blood_splash.png", "images/palm.png",
-               "images/dead_panda.png",
-               "images/sand.png"
-              ]);
-          
-          gamejs.ready(main);
-        } else {
-          $("#login-fail").show();
-        }
-      });
+    if (startClicked) {
+      return;
+    }
+    
+    startClicked = true;
+    socket.emit('join', $('#nick').val(), function(ok) {
+      if (ok) {
+        gamejs.preload(
+            ["images/panda_side_1.png", "images/panda_side_2.png",
+             "images/panda_down_1.png", "images/panda_down_2.png",
+             "images/panda_up_1.png", "images/panda_up_2.png",
+             "images/panda_sitting_down.png",
+             "images/panda_sitting_up.png",
+             "images/panda_sitting_right.png",
+             "images/flame_bolt_vert_1.png", "images/flame_bolt_vert_2.png",
+             "images/grass_tile.png",
+             "images/flame_bolt_horizontal_1.png", "images/flame_bolt_horizontal_2.png",
+             "images/blood_splash.png", "images/palm.png",
+             "images/dead_panda.png",
+             "images/sand.png"
+            ]);
+        
+        gamejs.ready(main);
+      } else {
+        startClicked = false;
+        $("#login-fail").show();
+      }
+    });
   };
 
   $('#start').click(start);
