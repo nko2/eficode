@@ -29,10 +29,17 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      var moveCanvas = moveControls[0];
      moveCanvas.width = 200;
      moveCanvas.height= 200;
+     moveCanvas.globalAlpha = 0.5;
+     
      var ctx = moveCanvas.getContext('2d');
      
      ctx.strokeStyle = '#000';
-     ctx.fillStyle = 'rgba(200, 200, 200, 100)';
+     ctx.fillStyle = '#ccc';
+     
+     var upGrad = ctx.createLinearGradient(100, 100, 100, 0);
+     upGrad.addColorStop(0, '#ccc');
+     upGrad.addColorStop(1, '#999');
+     ctx.fillStyle = upGrad;
      
      ctx.beginPath();
      ctx.moveTo(0, 0);
@@ -41,6 +48,11 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
+     var downGrad = ctx.createLinearGradient(100, 100, 100, 200);
+     downGrad.addColorStop(0, '#ccc');
+     downGrad.addColorStop(1, '#999');
+     ctx.fillStyle = downGrad;
+     
      ctx.beginPath();
      ctx.moveTo(0, 200);
      ctx.lineTo(200, 200);
@@ -48,12 +60,24 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      ctx.closePath();
      ctx.fill();
      
+     
+     var leftGrad = ctx.createLinearGradient(100, 100, 0, 100);
+     leftGrad.addColorStop(0, '#ccc');
+     leftGrad.addColorStop(1, '#999');
+     ctx.fillStyle = leftGrad;
+     
      ctx.beginPath();
      ctx.moveTo(0, 0);
      ctx.lineTo(100, 100);
      ctx.lineTo(0, 200);
      ctx.closePath();
      ctx.fill();
+     
+     
+     var rightGrad = ctx.createLinearGradient(100, 100, 200, 100);
+     rightGrad.addColorStop(0, '#ccc');
+     rightGrad.addColorStop(1, '#999');
+     ctx.fillStyle = rightGrad;
      
      ctx.beginPath();
      ctx.moveTo(200, 0);
@@ -167,7 +191,12 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
       var fCtx = fireCanvas.getContext('2d');
 
       fCtx.strokeStyle = '#000';
-      fCtx.fillStyle = 'rgba(200, 200, 200, 100)';
+      fCtx.fillStyle = '#ccc';
+
+      var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
+      fireGrad.addColorStop(0, '#ccc');
+      fireGrad.addColorStop(1, '#999');
+      fCtx.fillStyle = fireGrad;
       
       fCtx.fillRect(0, 0, 200, 200);
       
