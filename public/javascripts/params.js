@@ -1,6 +1,6 @@
 params = {
-  gameWidth: 600,
-  gameHeight: 600,
+  gameWidth: 750,
+  gameHeight: 500,
   pandaWidth: 15,
   pandaHeight: 15,
   pandaStartHealth: 100,

@@ -8,13 +8,13 @@ $(document).ready(function() {
 		$("#login").remove();
 		$("#main").show();
 
-		display = gamejs.display.setMode([600, 600]);
+		display = gamejs.display.setMode([params.gameWidth, params.gameHeight]);
 		var areaWidth = $(window).width() - $('#sidebar').width() - 20
       , areaHeight = $(window).height()
-      , resizeFactor = Math.min(areaWidth / 600, areaHeight / 600);
+      , resizeFactor = Math.min(areaWidth / params.gameWidth, areaHeight / params.gameHeight);
     $("#gjs-canvas").css({
-      width: 600 * resizeFactor,
-      height: 600 * resizeFactor
+      width: params.gameWidth * resizeFactor,
+      height: params.gameHeight * resizeFactor
     });
     
 		tick.start(display, socket, gameInit);

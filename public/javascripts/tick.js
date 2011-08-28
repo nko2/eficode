@@ -119,8 +119,8 @@ var start = function(display, socket, gameInit) {
 
 	var grass = new gamejs.sprite.Group();
 	var i, j;
-	for (i = 0; i < 600; i += 15) {
-		for (j = 0; j < 600; j += 15) {
+	for (i = 0; i < params.gameWidth; i += 15) {
+		for (j = 0; j < params.gameHeight; j += 15) {
 			grass.add(new sprites.Grass([i, j]));
 		}
 	}
