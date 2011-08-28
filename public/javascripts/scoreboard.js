@@ -67,7 +67,8 @@ Scoreboard.prototype.show = function() {
     position: "absolute",
     opacity: 0.8,
     top: sbY + "px",
-    left: sbX + "px"
+    left: sbX + "px",
+    "z-index": 100000
   });
   
   this.el.fadeIn();

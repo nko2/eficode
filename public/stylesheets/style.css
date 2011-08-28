@@ -30,11 +30,20 @@ body {
 #header {
   padding-top:36px;
   padding-bottom:15px;
-  width:256px;
   height:80px;
 }
 
+#header #img {
+  float:left;
+}
+
+#header #vote {
+  margin-top:27px;
+  float:right;
+}
+
 #instructions {
+  clear:both;
   font-size:0.8em;
   padding:0;
   list-style-type:none;
