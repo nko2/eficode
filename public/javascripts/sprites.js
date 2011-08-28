@@ -109,7 +109,7 @@ Panda.prototype.update = function(msDuration) {
   if (!(this.get('alive'))) {
     this.image = this.deadImage;
   } else if (this.get('moving') === 0) {
-    this.image = this.imageGroups[0][this.dir];
+    this.image = this.imageGroups[0][this.get('dir')];
   } else {
     Animated.prototype.update.call(this, msDuration);
   }
