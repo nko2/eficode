@@ -8,6 +8,7 @@ var evt = require('events')
   , pandas = {}
   , newPandas = {}
   , removedPandas = []
+  , pandaDeltas = {}
   , pandaMovementCommands = []
   , projectiles = {}
   , newProjectiles = {}
@@ -112,29 +113,41 @@ function getProjectileDimensions(dir) {
   }
 };
 
-function poorPandaWasShot(panda, shooter) {
+function poorPandaWasShot(pandaId, panda, shooterId, shooter) {
+  if (!pandaDeltas[pandaId]) pandaDeltas[pandaId] = {};
+  
   panda.health -= params.projectileDamage;
+  pandaDeltas[pandaId].health = panda.health;
+  
   if (panda.health <= 0) {
       var regenPos = movement.findNewPosForPanda(pandas);
       if (shooter) {
           shooter.score += params.projectileKillScore;
+          
+          if (!pandaDeltas[shooterId]) pandaDeltas[shooterId] = {};
+          pandaDeltas[shooterId].score = shooter.score;
       }
       panda.x = regenPos.x;
       panda.y = regenPos.y;
       panda.moving = 0;
       panda.health = params.pandaStartHealth;
+      
+      pandaDeltas[pandaId].x = panda.x;
+      pandaDeltas[pandaId].y = panda.y;
+      pandaDeltas[pandaId].moving = panda.moving;
+      pandaDeltas[pandaId].health = panda.health;
   }
 }
 
 function applyProjectileCollisions() {
   _(projectiles).each(function(proj, id) {
     var projDim = getProjectileDimensions(proj.dir);
-    _(pandas).each(function (panda) {
+    _(pandas).each(function (panda, pandaId) {
       if (geom.rectsIntersect(proj.x,  proj.y,  projDim.width,     projDim.height,
                               panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
         collidedProjectiles.push(id);                            
         newExplosions[uid()] = {x: panda.x, y: panda.y, age: 0};
-        poorPandaWasShot(panda, pandas[proj.owner]);
+        poorPandaWasShot(pandaId, panda, proj.owner, pandas[proj.owner]);
       }
     });
   });
@@ -239,6 +252,12 @@ function applyMovements() {
     if (!deltas[id]) deltas[id] = {};
     _(deltas[id]).extend(update);
   });
+  
+  _(pandaDeltas).each(function(delta, id) {
+    if (!deltas[id]) deltas[id] = {};
+    _(deltas[id]).extend(delta);
+  });
+  pandaDeltas = {};
   
   return deltas;
 }
