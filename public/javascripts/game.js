@@ -61,6 +61,7 @@ Game.prototype.draw = function(mainSurface) {
       } catch (e) {
         self.socket.send(e);
         self.socket.send(el.getType())
+        self.socket.send(el.image);
       }
     });
   });
