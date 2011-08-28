@@ -98,4 +98,5 @@ var palmCoordinates = [ [ 385, 494 ],
   [ 59, 350 ],
   [ 270, 90 ],
   [ 264, 59 ] ];
-exports = palmCoordinates;
+
+exports.coords = palmCoordinates;

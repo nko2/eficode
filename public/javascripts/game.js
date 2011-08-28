@@ -42,8 +42,7 @@ Game.prototype.fire = function() {
 
 Game.prototype.draw = function(mainSurface) {
   mainSurface.fill("#FFFFFF");	
-  background.drawGrass(mainSurface);
-  background.drawSand(mainSurface);
+  this.background.drawGrass(mainSurface);
 
   // Group all elements by type
   var byType = { EXPLOSION : [], PROJECTILE: [], PANDA: [], PALM: [] };
@@ -58,7 +57,7 @@ Game.prototype.draw = function(mainSurface) {
     });
   });
 
-  background.drawPalms(mainSurface);
+  this.background.drawPalms(mainSurface);
 
   // Update score board
   $("#player-list").empty();
@@ -113,7 +112,6 @@ Game.prototype.updateState = function(state) {
       delete that.elements[id];
     });
   }
-  
 };
 
 exports.Game = Game;

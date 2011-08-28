@@ -1,13 +1,18 @@
 var gamejs = require('gamejs')
   , params = window.params
-  , palmCoordinates = require('palm_coordinates')
-  , sandCoordinates = require('sand_coordinates');
+  , palmCoordinates = require('palm_coordinates').coords
+  , sandCoordinates = require('sand_coordinates').coords;
 
-var drawImage = function(img, coordinates) {
-  var surface = new gamejs.Surface(params.gameWidth, params.gameHeight);
-
+var drawImage = function(img, coordinates, surface) {
+  if (surface === undefined) {
+    surface = new gamejs.Surface(params.gameWidth, params.gameHeight);
+  }
+  
   _(coordinates).each(function(coord) {
-    surface.blit(img, [coord[0], coord[1]], [img.getSize()[0], img.getSize()[1]]);
+    var x = coord[0]
+      , y = coord[1];
+    
+    surface.blit(img, new gamejs.Rect([x, y]));
    });
 
    return surface;
@@ -18,12 +23,12 @@ var fillWithImage = function(img) {
     , y = 0
     , w = img.getSize()[0]
     , h = img.getSize()[1];
-
+    
   var surface = new gamejs.Surface(params.gameWidth, params.gameHeight);
 
-  for (; x < params.gameWidth; x += w) {
-    for (; y < params.gameHeight; y += h) {
-      surface.blit(img, [x, y], [w, h]);
+  for (x = 0; x < params.gameWidth; x += w) {
+    for (y = 0; y < params.gameHeight; y += h) {
+      surface.blit(img, new gamejs.Rect([x, y]));
     }
   }
 
@@ -31,26 +36,21 @@ var fillWithImage = function(img) {
 };
 
 var Background = function() {
-  /*
   var palmImage = gamejs.image.load("images/palm.png");
   this.palmSurface = drawImage(palmImage, palmCoordinates);
-
-  var sandImage = gamejs.image.load("images/sand.png");
-  this.sandSurface = drawImage(sandImage, sandCoordinates);
-*/
+  
   var grassImage = gamejs.image.load("images/grass_tile.png");
   this.grassSurface = fillWithImage(grassImage);
+  
+  var sandImage = gamejs.image.load("images/sand.png");
+  drawImage(sandImage, sandCoordinates, this.grassSurface);
 };
 
-Background.drawPalms = function(mainSurface) {
-  //mainSurface.blit(this.palmSurface);
+Background.prototype.drawPalms = function(mainSurface) {
+  mainSurface.blit(this.palmSurface);
 };
 
-Background.drawSand = function(mainSurface) {
-  //mainSurface.blit(this.sandSurface);
-};
-
-Background.drawGrass = function(mainSurface) {
+Background.prototype.drawGrass = function(mainSurface) {
   mainSurface.blit(this.grassSurface);
 }
 

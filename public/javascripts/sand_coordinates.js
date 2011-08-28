@@ -8,4 +8,5 @@ var sandCoordinates = [ [ 641, 217 ],
   [ 465, 110 ],
   [ 104, 265 ],
   [ 683, 317 ] ];
-exports = sandCoordinates;
+
+exports.coords = sandCoordinates;

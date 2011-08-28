@@ -13,5 +13,5 @@ _(_.range(count)).each(function() {
 });
 console.log("var " + name + " = " + util.inspect(tuples) + ";");
 if(export) {
-    console.log("exports = " + name + ";");
+    console.log("exports.coords = " + name + ";");
 }
