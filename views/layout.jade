@@ -10,4 +10,7 @@ html
     script(src='/javascripts/gamejs-wrapped.js')
     script(src='/javascripts/params.js')
     script(src='/javascripts/init.js')
-  body!= body
+  body
+    span
+      iframe(src='http://nodeknockout.com/iframe/eficode', frameborder='0', scrolling='no', allowtransparency='true', width='115', height='25')
+    != body
