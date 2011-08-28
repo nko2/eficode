@@ -77,8 +77,9 @@ Game.prototype.draw = function(mainSurface) {
   });
   
   // Update score board
+  $("#player-list").empty();
+  
   _(byType["PANDA"]).each(function(panda) {
-    $("#player-list").empty();
     $('#player-list').append($('<li>').text(panda.get('nick') + ": " + panda.get('score')));
   });
 };
