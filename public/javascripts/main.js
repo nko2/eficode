@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 	var scaleToFitWindow = function() {
 	  var areaWidth = $(window).width() - $('#sidebar').width() - 20
-      , areaHeight = $(window).height()
+      , areaHeight = $(window).height() - $('#header').height() - 20
       , resizeFactor = Math.min(areaWidth / window.params.gameWidth, areaHeight / window.params.gameHeight);
     
     $("#gjs-canvas").css({
