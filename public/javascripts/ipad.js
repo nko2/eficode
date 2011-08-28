@@ -37,6 +37,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
            
        socket.send('touch start '+x+','+y);
        socket.send(evt);
+       evt.preventDefault();
        return false;
      });
      moveControlsEl.addEventListener('touchmove', function(evt) {
