@@ -3,6 +3,9 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
 //if (isPad) {
   
   var start = function(socket) {
+    
+    $('<meta name="viewport" content="width=device-width,maximum-scale=1.0" />').appendTo($('head'));
+    
     var moveControls = $('<div>');
      $(moveControls.css({
        position: 'fixed',
@@ -16,6 +19,8 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      moveControls.bind('touchstart', function(evt) {
        socket.send('touch start');
        socket.send(evt);
+       evt.preventDefault();
+       return false;
      });
      
      $(document.body).append(moveControls);
