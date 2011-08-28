@@ -7,7 +7,7 @@ module.exports = function(io) {
   // Client -> Server
   io.sockets.on('connection', function(socket) {
     socket.on('join', function(nick, callback) {
-      if (_(game.getNicks()).include(nick)) {
+      if (_(game.getNicks()).include(nick) || nick.trim().length == 0) {
         callback(false);
       } else {
         var id = uid();
