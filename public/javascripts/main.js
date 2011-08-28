@@ -35,6 +35,10 @@ $(document).ready(function() {
 		display = gamejs.display.setMode([window.params.gameWidth, window.params.gameHeight]);    
 		scaleToFitWindow();
 		
+		$(window).resize(function() {
+		  scaleToFitWindow();
+		});
+		
 		tick.start(display, socket);
 	};
 	
