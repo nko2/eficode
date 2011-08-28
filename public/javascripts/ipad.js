@@ -29,6 +29,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      }));
      
      moveControls.bind('touchstart', function(evt) {
+       socket.send('touches '+evt.targetTouches+' '+evt.targetTouches[0]);
        var touch = evt.targetTouches[0]
           , x = touch.clientX
           , y = touch.clientY;
@@ -39,6 +40,8 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        return false;
      });
      moveControls.bind('touchmove', function(evt) {
+       socket.send('m touches '+evt.targetTouches+' '+evt.targetTouches[0]);
+       
        var touch = evt.targetTouches[0]
           , x = touch.clientX
           , y = touch.clientY;
@@ -47,11 +50,11 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
        evt.preventDefault();
        return false;
      });
-//     moveControls.bind('touchend', function(evt) {
-//       socket.send('touch end');
-//       evt.preventDefault();
-//       return false;
-//     });
+     moveControls.bind('touchend', function(evt) {
+       socket.send('touch end');
+       evt.preventDefault();
+       return false;
+     });
      
      $(document.body).append(moveControls);
   };
