@@ -9,7 +9,8 @@ _(_.range(count)).each(function() {
     var x, y;
     x = Math.random() * params.gameWidth;
     y = Math.random() * params.gameHeight;
-    tuples.push([Math.floor(x),Math.floor(y)]);
+    r = Math.random() * 360;
+    tuples.push([Math.floor(x),Math.floor(y),Math.floor(r)]);
 });
 console.log("var " + name + " = " + util.inspect(tuples) + ";");
 if(export) {
