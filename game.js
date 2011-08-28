@@ -134,7 +134,7 @@ function applyProjectileCollisions() {
                               panda.x, panda.y, params.pandaWidth, params.pandaHeight)) {
         collidedProjectiles.push(id);                            
         newExplosions[uid()] = {x: panda.x, y: panda.y, age: 0};
-        poorPandaWasShot(panda, shooter);
+        poorPandaWasShot(panda, pandas[proj.owner]);
       }
     });
   });
