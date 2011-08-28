@@ -40,69 +40,7 @@ var addMoveControls = function(game) {
    
    var ctx = moveCanvas.getContext('2d');
    
-   ctx.strokeStyle = '#000';
-
-   ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 100, 0);
-   ctx.beginPath();
-   ctx.moveTo(0, 0);
-   ctx.lineTo(200, 0);
-   ctx.lineTo(100, 100);
-   ctx.closePath();
-   ctx.fill();
-   
-   ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 100, 200);
-   ctx.beginPath();
-   ctx.moveTo(0, 200);
-   ctx.lineTo(200, 200);
-   ctx.lineTo(100, 100);
-   ctx.closePath();
-   ctx.fill();
-   
-   ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 0, 100);
-   ctx.beginPath();
-   ctx.moveTo(0, 0);
-   ctx.lineTo(100, 100);
-   ctx.lineTo(0, 200);
-   ctx.closePath();
-   ctx.fill();
-
-   ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 200, 100);
-   ctx.beginPath();
-   ctx.moveTo(200, 0);
-   ctx.lineTo(200, 200);
-   ctx.lineTo(100, 100);
-   ctx.closePath();
-   ctx.fill();
-   
-   ctx.fillStyle = 'black';
-   
-   ctx.beginPath();
-   ctx.moveTo(80, 40);
-   ctx.lineTo(120, 40);
-   ctx.lineTo(100, 20);
-   ctx.closePath();
-   ctx.fill();
-   
-   ctx.beginPath();
-   ctx.moveTo(80, 160);
-   ctx.lineTo(120, 160);
-   ctx.lineTo(100, 180);
-   ctx.closePath();
-   ctx.fill();
-   
-   ctx.beginPath();
-   ctx.moveTo(40, 80);
-   ctx.lineTo(40, 120);
-   ctx.lineTo(20, 100);
-   ctx.closePath();
-   ctx.fill();
-   
-   ctx.beginPath();
-   ctx.moveTo(160, 80);
-   ctx.lineTo(160, 120);
-   ctx.lineTo(180, 100);
-   ctx.closePath();
-   ctx.fill();
+   drawMoveControls(ctx, moveCanvas);
    
    $(document.body).append(moveControls);
    
@@ -132,6 +70,7 @@ var addMoveControls = function(game) {
      if (dir) {
        game.changeDirection(dir);
      }
+     drawMoveControls(ctx, moveCanvas, dir);
      evt.preventDefault();
      return false;
    });
@@ -141,19 +80,97 @@ var addMoveControls = function(game) {
      if (dir) {
       game.changeDirection(dir);
      }
+     drawMoveControls(ctx, moveCanvas, dir);
      evt.preventDefault();
      return false;
    });
    moveCanvas.addEventListener('touchend', function(evt) {
      game.stopMoving();
+     drawMoveControls(ctx, moveCanvas);
      return false;
    });
 }
 
-var makeLinearGradient = function(ctx, x1, y1, x2, y2) {
+var drawMoveControls = function(ctx, canvas, dir) {
+  clearCanvas(ctx, canvas);
+  
+  ctx.strokeStyle = '#000';
+
+  var upAlpha = 0.6;
+  if (dir === params.Direction.UP) upAlpha = 0.9;
+  ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 100, 0, upAlpha);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(200, 0);
+  ctx.lineTo(100, 100);
+  ctx.closePath();
+  ctx.fill();
+  
+  var downAlpha = 0.6;
+  if (dir === params.Direction.DOWN) downAlpha = 0.9;
+  ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 100, 200, downAlpha);
+  ctx.beginPath();
+  ctx.moveTo(0, 200);
+  ctx.lineTo(200, 200);
+  ctx.lineTo(100, 100);
+  ctx.closePath();
+  ctx.fill();
+  
+  var leftAlpha = 0.6;
+  if (dir === params.Direction.LEFT) leftAlpha = 0.9;
+  ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 0, 100, leftAlpha);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(100, 100);
+  ctx.lineTo(0, 200);
+  ctx.closePath();
+  ctx.fill();
+
+  var rightAlpha = 0.6;
+  if (dir === params.Direction.RIGHT) rightAlpha = 0.9;
+  ctx.fillStyle = makeLinearGradient(ctx, 100, 100, 200, 100, rightAlpha);
+  ctx.beginPath();
+  ctx.moveTo(200, 0);
+  ctx.lineTo(200, 200);
+  ctx.lineTo(100, 100);
+  ctx.closePath();
+  ctx.fill();
+  
+  ctx.fillStyle = 'black';
+  
+  ctx.beginPath();
+  ctx.moveTo(80, 40);
+  ctx.lineTo(120, 40);
+  ctx.lineTo(100, 20);
+  ctx.closePath();
+  ctx.fill();
+  
+  ctx.beginPath();
+  ctx.moveTo(80, 160);
+  ctx.lineTo(120, 160);
+  ctx.lineTo(100, 180);
+  ctx.closePath();
+  ctx.fill();
+  
+  ctx.beginPath();
+  ctx.moveTo(40, 80);
+  ctx.lineTo(40, 120);
+  ctx.lineTo(20, 100);
+  ctx.closePath();
+  ctx.fill();
+  
+  ctx.beginPath();
+  ctx.moveTo(160, 80);
+  ctx.lineTo(160, 120);
+  ctx.lineTo(180, 100);
+  ctx.closePath();
+  ctx.fill();
+}
+
+var makeLinearGradient = function(ctx, x1, y1, x2, y2, alpha) {
   var grad = ctx.createLinearGradient(x1, y1, x2, y2);
-  grad.addColorStop(0, 'rgba(100, 100, 100, 0.4)');
-  grad.addColorStop(1, 'rgba(80, 80, 80, 0.4)');
+  grad.addColorStop(0, 'rgba(100, 100, 100, '+alpha+')');
+  grad.addColorStop(1, 'rgba(80, 80, 80, '+alpha+')');
   return grad;
 }
 
@@ -174,27 +191,43 @@ var addFireControls = function(game) {
    fireCanvas.height= 200;
    var fCtx = fireCanvas.getContext('2d');
 
-   fCtx.strokeStyle = '#000';
-   fCtx.fillStyle = '#ccc';
-
-   var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
-   fireGrad.addColorStop(0, 'rgba(100, 100, 100, 0.4)');
-   fireGrad.addColorStop(1, 'rgba(80, 80, 80, 0.4)');
-   fCtx.fillStyle = fireGrad;
-   
-   fCtx.fillRect(0, 0, 200, 200);
-   
-   fCtx.font = "bold 30px sans-serif";
-   fCtx.fillStyle = 'black';
-   fCtx.fillText("Fire", 75, 110);
+   drawFireControls(fCtx, fireCanvas, 0.6);
    
    $(document.body).append(fireControls);
        
    fireCanvas.addEventListener('touchstart', function(evt) {
      game.fire();
+     drawFireControls(fCtx, fireCanvas, 0.9);
+     setTimeout(function() {
+       drawFireControls(fCtx, fireCanvas, 0.6);
+     }, 100);
      evt.preventDefault();
      return false;
    });
+}
+
+var drawFireControls = function(fCtx, canvas, alpha) {
+  clearCanvas(fCtx, canvas);
+  
+  fCtx.strokeStyle = '#000';
+  fCtx.fillStyle = '#ccc';
+  var fireGrad = fCtx.createRadialGradient(100, 100, 50, 100, 100, 150);      
+  fireGrad.addColorStop(0, 'rgba(100, 100, 100, '+alpha+')');
+  fireGrad.addColorStop(1, 'rgba(80, 80, 80, '+alpha+')');
+  fCtx.fillStyle = fireGrad;
+  
+  fCtx.fillRect(0, 0, 200, 200);
+  
+  fCtx.font = "bold 30px sans-serif";
+  fCtx.fillStyle = 'black';
+  fCtx.fillText("Fire", 75, 110);
+}
+
+var clearCanvas = function(ctx, canvas) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
 }
 
 
