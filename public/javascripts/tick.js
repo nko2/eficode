@@ -21,6 +21,8 @@ var start = function(display, socket) {
 	var onKeyDown = function(key) {
 		if (key == gamejs.event.K_SPACE) {
 			game.fire();
+		} else if (key == gamejs.event.K_TAB) {
+		  game.scoreboard.show();
 		} else {
 			var direction = utils.keyToDirection(key);
 		  game.changeDirection(direction);
@@ -28,7 +30,9 @@ var start = function(display, socket) {
 	};
 	
 	var onKeyUp = function(key) {
-		if (utils.keyToDirection(key) === game.currentDirection) {
+	  if (key == gamejs.event.K_TAB) {
+	    game.scoreboard.hide();
+	  } else if (utils.keyToDirection(key) === game.currentDirection) {
 			game.stopMoving();
 		}
 	};

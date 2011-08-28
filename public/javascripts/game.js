@@ -43,7 +43,7 @@ Game.prototype.fire = function() {
 };
 
 Game.prototype.draw = function(mainSurface) {
-  mainSurface.fill("#FFFFFF");	
+  mainSurface.fill("#FFFFFF");
   this.background.drawGrass(mainSurface);
 
   // Group all elements by type

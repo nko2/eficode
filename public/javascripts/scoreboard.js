@@ -1,5 +1,6 @@
 var Scoreboard = function() {
   this.el = $("#player-list");
+  this.showing = false;
 };
 
 Scoreboard.prototype.removePanda = function(pandaId) {
@@ -41,5 +42,44 @@ Scoreboard.prototype.updateScore = function(pandaId, newScore) {
   this.removePanda(pandaId);
   this.addPanda(pandaId, nick, newScore);
 };
+
+Scoreboard.prototype.show = function() {
+  if (this.showing === true) {
+    return;
+  }
+  
+  this.showing = true;
+  
+  var canvas = $("#gjs-canvas");
+  var w = parseInt(canvas.css('width'), 10)
+    , h = parseInt(canvas.css('height'), 10)
+    , pos = canvas.position()
+    , sbW = w - 40
+    , sbH = h - 40
+    , sbX = pos.left + Math.floor((w-sbW)/2)
+    , sbY = pos.top + Math.floor((h-sbH)/2);
+  
+  console.log(w, h, pos, sbW, sbH, sbX, sbY);
+  
+  this.el.css({
+    width: sbW,
+    height: sbH,
+    position: "absolute",
+    opacity: 0.8,
+    top: sbY + "px",
+    left: sbX + "px"
+  });
+  
+  this.el.fadeIn();
+};
+
+Scoreboard.prototype.hide = function() {
+  if (this.showing === false) {
+    return;
+  }
+  
+  this.el.fadeOut();
+  this.showing = false;
+}
 
 exports.Scoreboard = Scoreboard;

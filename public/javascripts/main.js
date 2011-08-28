@@ -5,9 +5,11 @@ $(document).ready(function() {
 	var socket = io.connect();
 
 	var scaleToFitWindow = function() {
-	  var areaWidth = $("#main").width()
+	  var areaWidth = $(window).width()
       , areaHeight = $(window).height() - $("#header").height() - 140
       , resizeFactor = Math.min(areaWidth / window.params.gameWidth, areaHeight / window.params.gameHeight);
+    
+    console.log(areaWidth, areaHeight, resizeFactor, window.params.gameWidth * resizeFactor);
     
     $("#gjs-canvas").css({
       width: window.params.gameWidth * resizeFactor,
@@ -15,12 +17,14 @@ $(document).ready(function() {
     });
     
     $("#wrapper").css({
-      width: window.params.gameWidth * resizeFactor
+      width: window.params.gameWidth * resizeFactor,
+      position: "absolute",
+      left: Math.floor((areaWidth - (window.params.gameWidth * resizeFactor))/2)
     });
     
     $("#instructions").css({
       width: window.params.gameWidth * resizeFactor
-    })
+    });
 	};
 
 
