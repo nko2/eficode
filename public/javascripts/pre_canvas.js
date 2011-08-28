@@ -3,9 +3,13 @@ var gamejs = require('gamejs')
   , palmCoordinates = require('palm_coordinates').coords
   , sandCoordinates = require('sand_coordinates').coords;
 
-var drawImage = function(img, coordinates, surface) {
+var drawImage = function(img, coordinates, surface, rect) {
   if (surface === undefined) {
     surface = new gamejs.Surface(params.gameWidth, params.gameHeight);
+  }
+  if (rect === undefined) {
+      var size = img.getSize();
+      rect = new gamejs.Rect([0,0],img.getSize());
   }
   
   _(coordinates).each(function(coord) {
@@ -13,8 +17,13 @@ var drawImage = function(img, coordinates, surface) {
       , y = coord[1]
       , r = coord[2];
     
-    var rotatedImage = gamejs.transform.rotate(img, r);
-    surface.blit(rotatedImage, new gamejs.Rect([x, y]));
+    var x_ = Math.min(params.gameWidth - x, rect.width);
+    var y_ = Math.min(params.gameHeight - y, rect.height);
+    //var rotatedImage = gamejs.transform.rotate(img, r);
+    var left = rect.left;
+    var top = rect.top;
+    var r_ = new gamejs.Rect([left, top], [x_,y_]);
+    surface.blit(img, new gamejs.Rect([x+left, y+top],[x_,y_]), r_);
    });
 
    return surface;
@@ -39,13 +48,18 @@ var fillWithImage = function(img) {
 
 var Background = function() {
   var palmImage = gamejs.image.load("images/palm.png");
-  this.palmSurface = drawImage(palmImage, palmCoordinates);
-  
+  var rect = new gamejs.Rect([0,0],[50,25]);
+  this.palmSurface = drawImage(palmImage, palmCoordinates, undefined, rect);
+
   var grassImage = gamejs.image.load("images/grass_tile.png");
   this.grassSurface = fillWithImage(grassImage);
-  
+
   var sandImage = gamejs.image.load("images/sand.png");
   drawImage(sandImage, sandCoordinates, this.grassSurface);
+
+  rect = new gamejs.Rect([0,25],[50,22]);
+  drawImage(palmImage, palmCoordinates, this.grassSurface, rect);
+
 };
 
 Background.prototype.drawPalms = function(mainSurface) {
