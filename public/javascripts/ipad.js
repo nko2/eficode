@@ -29,7 +29,7 @@ var isPad = navigator.userAgent.match(/iPad/i) != null;
      }));
      var moveCanvas = moveControls[0];
      var ctx = moveCanvas.getContext('2d');
-     
+     $(document.body).append(moveControls);
      
      var upTriangle = [[[0,   0],   [200, 0]],   [[200, 0],   [100, 100]], [[100, 100], [0, 0]]];
      var downTriangle =   [[[0,   200], [200, 200]], [[200, 200], [100, 100]], [[100, 100], [0, 200]]];
