@@ -60,6 +60,7 @@ Game.prototype.draw = function(mainSurface) {
   });
 
   this.background.drawPalms(mainSurface);
+
 };
 
 Game.prototype.updateState = function(state) {
